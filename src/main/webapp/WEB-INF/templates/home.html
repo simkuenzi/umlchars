@@ -1,0 +1,42 @@
+<html th:replace="~{layout :: layout(~{::title}, ~{::div})}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>UML Chars</title>
+    <link rel="stylesheet" href="../../style.css" type="text/css">
+</head>
+<body class="body">
+<div>
+
+    <form class="form" method="post">
+        <div class="form-row">
+            <div class="form-label"><label for="classNameA">Class A</label></div>
+            <div class="form-input" th:class="${form.classNameA.valid}? 'form-input' : 'form-input-active form-input'">
+                <input id="classNameA" name="classNameA" type="text" th:value="${form.classNameA}" />
+                <div class="form-input-message" th:text="${form.classNameA.message}">
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-label"><label for="classNameB">Class B</label></div>
+            <div class="form-input" th:class="${form.classNameB.valid}? 'form-input' : 'form-input-active form-input'">
+                <input id="classNameB" name="classNameB" type="text" th:value="${form.classNameB}" />
+                <div class="form-input-message" th:text="${form.classNameB.message}">
+                </div>
+            </div>
+        </div>
+        <div class="form-row form-row-action">
+            <span class="form-action-message" th:if="${form.valid} == false" th:text="${form.message}">Invalid Input</span>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+    <div>
+        <pre th:text="${uml}">
+            +-------+   +-------+
+            | Hello |---| World |
+            +-------+   +-------+
+        </pre>
+    </div>
+
+</div>
+</body>
+</html>

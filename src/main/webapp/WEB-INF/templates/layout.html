@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html th:fragment="layout(title, content)" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:include="${title}">Page Title</title>
+    <link rel="stylesheet" th:href="@{/style.css}" href="../../style.css" type="text/css">
+    <link rel="shortcut icon" th:href="@{/images/favicon.jpg}" />
+</head>
+<body>
+
+<div class="header">
+    <span class="header-title">
+        UML Chars
+    </span>
+</div>
+
+<div class="body">
+<h1 th:include="${title}">Page Title</h1>
+<div th:replace="${content}">
+    Page content comes here...
+</div>
+</div>
+
+<div class="footer">
+    <span class="version" th:text="'Version ' + ${version}">
+        Version x.x
+    </span>
+</div>
+
+</body>
+</html>

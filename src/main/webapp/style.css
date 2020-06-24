@@ -1,0 +1,157 @@
+.comment {
+    color: gray;
+    font-style: italic;
+}
+
+.header {
+    background-color: A8D000;
+    height: 60px;
+    font-size: 14pt;
+    border-radius: 4px;
+}
+
+.header-title {
+    padding-left: 30px;
+    line-height: 60px;
+    vertical-align: middle;
+    display: inline-block;
+    color: white;
+    font-weight: bold;
+}
+
+.footer {
+    margin-top: 50px;
+    background-color: A8D000;
+    height: 40px;
+    font-size: 14pt;
+    border-radius: 4px;
+}
+
+.version {
+    padding-left: 30px;
+    line-height: 40px;
+    vertical-align: middle;
+    display: inline-block;
+    color: white;
+    font-weight: bold;
+}
+
+.header-user {
+    text-align: right;
+    float: right;
+    padding-right: 30px;
+    line-height: 60px;
+    vertical-align: middle;
+    display: inline-block;
+    color: white;
+ }
+
+
+.header > a {
+    color: white;
+    font-weight: bold;
+    font-size: 18pt;
+}
+
+.body {
+    text-align: center;
+    font-size: 20pt;
+}
+
+.body > h1 {
+    color: A8D000;
+}
+
+.form {
+    text-align: left;
+    min-width: 600px;
+    display: inline-block;
+}
+
+.form-label {
+    width: 25%;
+    float: left;
+    margin-top: 6px;
+}
+
+.form-input {
+    width: 75%;
+    float: right;
+    margin-top: 6px;
+    background-color: lightgray;
+    border-radius: 4px;
+}
+
+.form-input-message {
+    padding: 5px;
+    height: 30px;
+    color: white;
+}
+
+.form-input-active {
+    background-color: A8D000;
+}
+
+.form-row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.form-row-action {
+    text-align: right;
+    height: 60px;
+}
+
+.form-action-message {
+    color: A8D000;
+    margin-right: 30px;
+    vertical-align: bottom;
+    display: inline-block;
+    line-height: 60px;
+}
+
+label {
+    display: inline-block;
+}
+
+input[type=text], input[type=password], select, textarea, .input {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  padding: 12px;
+  font-size: 14pt;
+}
+
+button, input[type=submit] {
+  cursor: pointer;
+  float: right;
+  margin-top: 6px;
+  padding: 12px;
+  font-size: 14pt;
+  border: none;
+  color: white;
+  background-color: A8D000;
+  border-radius: 8pt;
+  font-weight: bold;
+}
+
+button:hover, input[type=submit]:hover {
+  background-color: #C3EC00;
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+@media screen and (max-width: 600px) {
+  .form-label, .form-input, input[type=submit], button {
+    width: 100%;
+  }
+  .form {
+      min-width: 20px;
+  }
+}
