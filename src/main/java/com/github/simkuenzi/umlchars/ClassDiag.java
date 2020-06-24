@@ -4,19 +4,37 @@ import java.util.Arrays;
 
 class ClassDiag {
 
-    private String classNameA;
-    private String classNameB;
+    private String[] classNames;
 
-    ClassDiag(String classNameA, String classNameB) {
-        this.classNameA = classNameA;
-        this.classNameB = classNameB;
+    ClassDiag(String... classNames) {
+        this.classNames = classNames;
     }
 
     String asText() {
-        return
-                "+" + repeat('-', classNameA.length() + 2) + "+" + "   " + "+" + repeat('-', classNameB.length() + 2) + "+\n" +
-                "| " + classNameA + " |---| " + classNameB + " |\n" +
-                "+" + repeat('-', classNameA.length() + 2) + "+" + "   " + "+" + repeat('-', classNameB.length() + 2) + "+";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < classNames.length; i++) {
+            sb.append("+").append(repeat('-', classNames[i].length() + 2)).append("+");
+            if (i < classNames.length - 1) {
+                sb.append("   ");
+            } else {
+                sb.append("\n");
+            }
+        }
+        for (int i = 0; i < classNames.length; i++) {
+            sb.append("| ").append(classNames[i]).append(" |");
+            if (i < classNames.length - 1) {
+                sb.append("---");
+            } else {
+                sb.append("\n");
+            }
+        }
+        for (int i = 0; i < classNames.length; i++) {
+            sb.append("+").append(repeat('-', classNames[i].length() + 2)).append("+");
+            if (i < classNames.length - 1) {
+                sb.append("   ");
+            }
+        }
+        return sb.toString();
     }
 
     private String repeat(char c, int length) {

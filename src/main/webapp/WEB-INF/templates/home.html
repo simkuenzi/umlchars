@@ -5,23 +5,11 @@
 </head>
 <body class="body">
 <div>
-
     <form class="form" method="post">
-        <div class="form-row">
-            <div class="form-label"><label for="classNameA">Class A</label></div>
-            <div class="form-input" th:class="${form.classNameA.valid}? 'form-input' : 'form-input-active form-input'">
-                <input id="classNameA" name="classNameA" type="text" th:value="${form.classNameA}" />
-                <div class="form-input-message" th:text="${form.classNameA.message}">
-                </div>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-label"><label for="classNameB">Class B</label></div>
-            <div class="form-input" th:class="${form.classNameB.valid}? 'form-input' : 'form-input-active form-input'">
-                <input id="classNameB" name="classNameB" type="text" th:value="${form.classNameB}" />
-                <div class="form-input-message" th:text="${form.classNameB.message}">
-                </div>
-            </div>
+        <input id="classCount" name="classCount" th:value="${form.classCount}" value="1" type="hidden" />
+        <div id="classes"></div>
+        <div class="form-row form-row-action">
+            <button type="button" onclick="javascript:addClass()">Add Class</button>
         </div>
         <div class="form-row form-row-action">
             <span class="form-action-message" th:if="${form.valid} == false" th:text="${form.message}">Invalid Input</span>
@@ -36,6 +24,79 @@
             +-------+   +-------+
         </pre>
     </div>
+
+    <div hidden class="form-row" id="classTemplate">
+        <div class="form-label"><label for="className">Class name</label></div>
+        <div class="form-input">
+            <input id="className" name="className" type="text" />
+            <div class="form-input-message">
+            </div>
+        </div>
+    </div>
+
+    <script language="JavaScript" th:inline="javascript">
+        var classNames = [
+            /*[# th:each="className, stat : ${form.classNames}"]*/
+            {
+                "value": /*[[${className.value}]]*/ "",
+                "valid": /*[[${className.valid}]]*/ true,
+                "message": /*[[${className.message}]]*/ ""
+            } /*[(${stat.size-1 > stat.index} ? ',':'')]*/
+            /*[/]*/
+        ];
+    </script>
+
+    <script language="JavaScript">
+        function initClass(i, o) {
+            var template = document.getElementById("classTemplate").cloneNode(true);
+            template.removeAttribute("hidden");
+            template.children.item(1).children.item("className").setAttribute("value", o.value);
+            template.children.item(1).setAttribute("class", o.valid ? "form-input" : "form-input-active form-input");
+            template.children.item(1).children.item(1).innerHTML = o.message;
+            adjustAttributes(template, i);
+            document.getElementById("classes").appendChild(template);
+        }
+
+        function addClass() {
+            initClass(classCount(), { "value": "", "valid": true, "message": "" });
+            incClassCount();
+        }
+
+        function classCount() {
+            return parseInt(document.getElementById("classCount").getAttribute("value"));
+        }
+
+        function incClassCount() {
+            document.getElementById("classCount").setAttribute("value", classCount() + 1);
+        }
+
+        function adjustAttributes(node, index) {
+            adjustAttribute(node, "id", index);
+            adjustAttribute(node, "name", index);
+            adjustAttribute(node, "for", index);
+
+            for (var i in node.children) {
+                if (node.children[i].nodeType == 1) {
+                    adjustAttributes(node.children[i], index);
+                }
+            }
+        }
+
+        function adjustAttribute(node, attributeName, index) {
+            if (node.hasAttribute(attributeName)) {
+                node.setAttribute(attributeName, node.getAttribute(attributeName) + index);
+            }
+        }
+
+
+        if (classCount() == 0) {
+            addClass();
+        }
+
+        for (var i in classNames) {
+            initClass(i, classNames[i]);
+        }
+    </script>
 
 </div>
 </body>
