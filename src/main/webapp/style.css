@@ -64,8 +64,18 @@
 
 .form {
     text-align: left;
-    min-width: 600px;
+    min-width: 700px;
     display: inline-block;
+}
+
+.form-section {
+    min-width: 690px;
+    display: table;
+    border-width: 2px;
+    border-color: A8D000;
+    border-style: solid;
+    padding: 4px;
+    margin: 4px;
 }
 
 .form-label {
@@ -147,11 +157,14 @@ ul {
     padding-left: 0;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 700px) {
   .form-label, .form-input, input[type=submit], button {
     width: 100%;
   }
   .form {
       min-width: 20px;
+  }
+  .form-section {
+    min-width: 0px;
   }
 }

@@ -1,7 +1,8 @@
 <html th:replace="~{layout :: layout(~{::title}, ~{::div})}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>UML Chars</title>
-    <link rel="stylesheet" href="../../style.css" type="text/css">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body class="body">
 <div>
@@ -25,11 +26,16 @@
         </pre>
     </div>
 
-    <div hidden class="form-row" id="classTemplate">
-        <div class="form-label"><label for="className">Class name</label></div>
-        <div class="form-input">
-            <input id="className" name="className" type="text" />
-            <div class="form-input-message">
+    <div hidden id="classTemplate">
+        <div class="form-row form-row-action">
+            <button><i class="fa fa-trash"></i></button>
+        </div>
+        <div class="form-row">
+            <div class="form-label"><label for="className">Class name</label></div>
+            <div class="form-input">
+                <input id="className" name="className" type="text" />
+                <div class="form-input-message">
+                </div>
             </div>
         </div>
     </div>
@@ -50,9 +56,10 @@
         function initClass(i, o) {
             var template = document.getElementById("classTemplate").cloneNode(true);
             template.removeAttribute("hidden");
-            template.children.item(1).children.item("className").setAttribute("value", o.value);
-            template.children.item(1).setAttribute("class", o.valid ? "form-input" : "form-input-active form-input");
-            template.children.item(1).children.item(1).innerHTML = o.message;
+            template.setAttribute("class", "form-section");
+            template.children.item(1).children.item(1).children.item("className").setAttribute("value", o.value);
+            template.children.item(1).children.item(1).setAttribute("class", o.valid ? "form-input" : "form-input-active form-input");
+            template.children.item(1).children.item(1).children.item(1).innerHTML = o.message;
             adjustAttributes(template, i);
             document.getElementById("classes").appendChild(template);
         }
