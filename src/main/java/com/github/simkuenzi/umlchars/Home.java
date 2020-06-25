@@ -1,5 +1,6 @@
 package com.github.simkuenzi.umlchars;
 
+import com.github.simkuenzi.restforms.FormField;
 import org.thymeleaf.TemplateEngine;
 
 import javax.ws.rs.*;
@@ -34,7 +35,7 @@ public class Home extends Controller {
         Map<String, Object> vars = new HashMap<>();
         vars.put("form", form);
         if (form.valid()) {
-            vars.put("uml", new ClassDiag(IntStream.range(0, form.classCount().value()).mapToObj(i -> form.className(i).rawValue()).collect(Collectors.toList()), Collections.emptyList()).asText());
+            vars.put("uml", new ClassDiag(form.classNames().stream().map(FormField::value).collect(Collectors.toList()), Collections.emptyList()).asText());
         }
         return Response.ok(render("home", vars), MediaType.TEXT_HTML).build();
     }
