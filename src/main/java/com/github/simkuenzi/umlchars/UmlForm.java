@@ -15,7 +15,9 @@ import java.util.stream.Stream;
 
 public class UmlForm {
 
-    private static final Pattern CLASS_NAME_FIELD_PATTERN = Pattern.compile(".*(\\d+)");
+    private static final Pattern CLASS_NAME_FIELD_PATTERN = Pattern.compile("className(\\d+)");
+    private static final Pattern ASSOC_FROM_FIELD_PATTERN = Pattern.compile("assocFrom(\\d+)");
+    private static final Pattern ASSOC_TO_FIELD_PATTERN = Pattern.compile("assocTo(\\d+)");
 
     private MultivaluedMap<String, String> rawForm;
 
@@ -40,6 +42,16 @@ public class UmlForm {
     public List<FormField<String>> classNames() {
         int fieldCount = (int) rawForm.keySet().stream().filter(x -> CLASS_NAME_FIELD_PATTERN.matcher(x).matches()).count();
         return IntStream.range(0, fieldCount).mapToObj(i -> new MandatoryField(new TextField(new FormValue("className" + i, rawForm)), "Provide some text here")).collect(Collectors.toList());
+    }
+
+    public List<FormField<String>> assocFroms() {
+        int fieldCount = (int) rawForm.keySet().stream().filter(x -> ASSOC_FROM_FIELD_PATTERN.matcher(x).matches()).count();
+        return IntStream.range(0, fieldCount).mapToObj(i -> new MandatoryField(new TextField(new FormValue("assocFrom" + i, rawForm)), "Provide some text here")).collect(Collectors.toList());
+    }
+
+    public List<FormField<String>> assocTos() {
+        int fieldCount = (int) rawForm.keySet().stream().filter(x -> ASSOC_TO_FIELD_PATTERN.matcher(x).matches()).count();
+        return IntStream.range(0, fieldCount).mapToObj(i -> new MandatoryField(new TextField(new FormValue("assocTo" + i, rawForm)), "Provide some text here")).collect(Collectors.toList());
     }
 
     public String message() {

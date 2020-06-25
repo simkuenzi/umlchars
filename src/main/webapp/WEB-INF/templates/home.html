@@ -63,7 +63,10 @@
         <div class="form-row">
             <div class="form-label"><label for="assocFrom">From</label></div>
             <div class="form-input">
-                <select id="assocFrom" name="assocFrom" type="text"></select>
+                <select id="assocFrom" name="assocFrom">
+                    <option value="a">a</option>
+                    <option value="b">b</option>
+                </select>
                 <div class="form-input-message">
                 </div>
             </div>
@@ -71,7 +74,10 @@
         <div class="form-row">
             <div class="form-label"><label for="assocTo">To</label></div>
             <div class="form-input">
-                <select id="assocTo" name="assocTo" type="text"></select>
+                <select id="assocTo" name="assocTo">
+                    <option value="a">a</option>
+                    <option value="b">b</option>
+                </select>
                 <div class="form-input-message">
                 </div>
             </div>
@@ -85,6 +91,23 @@
                 "value": /*[[${className.value}]]*/ "",
                 "valid": /*[[${className.valid}]]*/ true,
                 "message": /*[[${className.message}]]*/ ""
+            } /*[(${stat.size-1 > stat.index} ? ',':'')]*/
+            /*[/]*/
+        ];
+
+        var assocs = [
+            /*[# th:each="assocFrom, stat : ${form.assocFroms}"]*/
+            {
+                "assocFrom": {
+                    "value": /*[[${assocFrom.value}]]*/ "",
+                    "valid": /*[[${assocFrom.valid}]]*/ true,
+                    "message": /*[[${assocFrom.message}]]*/ ""
+                },
+                "assocTo": {
+                    "value": /*[[${form.assocTos[stat.index].value}]]*/ "",
+                    "valid": /*[[${form.assocTos[stat.index].valid}]]*/ true,
+                    "message": /*[[${form.assocTos[stat.index].message}]]*/ ""
+                }
             } /*[(${stat.size-1 > stat.index} ? ',':'')]*/
             /*[/]*/
         ];
@@ -172,7 +195,7 @@
                     if (options[i].getAttribute("value") == o.value) {
                         options[i].setAttribute("selected", "");
                     } else {
-                        options[i].removeAttribute();
+                        options[i].removeAttribute("selected");
                     }
                 }
             }
@@ -225,6 +248,10 @@
 
         for (var i in classNames) {
             initClass(i, classNames[i]);
+        }
+
+        for (var i in assocs) {
+            initAssoc(i, assocs[i]);
         }
 
         if (classCount() == 0) {
