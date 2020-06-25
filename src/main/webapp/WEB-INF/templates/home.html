@@ -8,10 +8,49 @@
 <div>
     <form class="form" method="post">
         <input id="classCount" name="classCount" th:value="${form.classCount}" value="1" type="hidden" />
-        <div id="classes"></div>
-        <div class="form-row form-row-action">
-            <button type="button" onclick="addClass()">Add Class</button>
+
+        <div class="tab">
+            <button class="tab-button-active" type="button" onclick="showTab(this, 'classes-tab')">Classes</button>
+            <button class="tab-button" type="button" onclick="showTab(this, 'associations-tab')">Associations</button>
         </div>
+
+        <div id="classes-tab" class="tab-content-active">
+            <div id="classes"></div>
+            <div class="form-row form-row-action">
+                <button type="button" onclick="addClass()">Add Class</button>
+            </div>
+        </div>
+
+        <div id="associations-tab" class="tab-content">
+            <div id="associations">
+                <div  id="assocTemplate" class="form-section">
+                    <div class="form-row form-row-action">
+                        <button type="button" onclick="removeAssoc(this)"><i class="fa fa-trash"></i></button>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label"><label for="assocFrom">From</label></div>
+                        <div class="form-input">
+                            <select id="assocFrom" name="assocFrom" type="text"></select>
+                            <div class="form-input-message">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label"><label for="assocTo">To</label></div>
+                        <div class="form-input">
+                            <select id="assocTo" name="assocTo" type="text"></select>
+                            <div class="form-input-message">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row form-row-action">
+                <button type="button">Add Association</button>
+            </div>
+        </div>
+
+
         <div class="form-row form-row-action">
             <span class="form-action-message" th:if="${form.valid} == false" th:text="${form.message}">Invalid Input</span>
             <button type="submit">Submit</button>
@@ -53,6 +92,21 @@
     </script>
 
     <script language="JavaScript">
+        function showTab(b, id) {
+            var active = document.getElementsByClassName("tab-content-active");
+            for (var i = 0; i < active.length; i++) {
+                active[i].setAttribute("class", "tab-content");
+            }
+
+            document.getElementById(id).setAttribute("class", "tab-content-active");
+
+            var tabs = b.parentElement;
+            for (var i = 0; i < tabs.children.length; i++) {
+                tabs.children[i].setAttribute("class", "tab-button");
+            }
+            b.setAttribute("class", "tab-button-active");
+        }
+
         function removeClass(b) {
             b.parentElement.parentElement.remove();
             adjustAttributesOnClasses();

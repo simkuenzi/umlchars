@@ -69,9 +69,9 @@
 }
 
 .form-section {
-    min-width: 690px;
+    min-width: 691px;
     display: table;
-    border-width: 2px;
+    border-width: 1px;
     border-color: A8D000;
     border-style: solid;
     padding: 4px;
@@ -121,6 +121,31 @@
     line-height: 60px;
 }
 
+.tab {
+    background-color: A8D000;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content-active {
+    display: inline-block;
+    border-style: solid;
+    border-width: 1px;
+    border-color: A8D000;
+    padding: 4px;
+}
+
+.tab-button-active {
+    background-color: #C3EC00;
+}
+
+.tab-button, .tab-button-active {
+    border-radius: 8pt 8pt 0pt 0pt;
+}
+
+
 label {
     display: inline-block;
 }
@@ -137,7 +162,6 @@ input[type=text], input[type=password], select, textarea, .input {
 
 button, input[type=submit] {
   cursor: pointer;
-  float: right;
   margin-top: 6px;
   padding: 12px;
   font-size: 14pt;
@@ -168,3 +192,4 @@ ul {
     min-width: 0px;
   }
 }
+
