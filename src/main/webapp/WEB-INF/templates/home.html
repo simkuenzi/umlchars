@@ -21,31 +21,9 @@
         </div>
 
         <div id="associations-tab" class="tab-content">
-            <div id="associations">
-                <div  id="assocTemplate" class="form-section">
-                    <div class="form-row form-row-action">
-                        <button type="button" onclick="removeAssoc(this)"><i class="fa fa-trash"></i></button>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label"><label for="assocFrom">From</label></div>
-                        <div class="form-input">
-                            <select id="assocFrom" name="assocFrom" type="text"></select>
-                            <div class="form-input-message">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label"><label for="assocTo">To</label></div>
-                        <div class="form-input">
-                            <select id="assocTo" name="assocTo" type="text"></select>
-                            <div class="form-input-message">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="associations"></div>
             <div class="form-row form-row-action">
-                <button type="button">Add Association</button>
+                <button type="button" onclick="addAssoc()">Add Association</button>
             </div>
         </div>
 
@@ -72,6 +50,28 @@
             <div class="form-label"><label for="className">Class name</label></div>
             <div class="form-input">
                 <input id="className" name="className" type="text" />
+                <div class="form-input-message">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div hidden id="assocTemplate">
+        <div class="form-row form-row-action">
+            <button type="button" onclick="removeAssoc(this)"><i class="fa fa-trash"></i></button>
+        </div>
+        <div class="form-row">
+            <div class="form-label"><label for="assocFrom">From</label></div>
+            <div class="form-input">
+                <select id="assocFrom" name="assocFrom" type="text"></select>
+                <div class="form-input-message">
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-label"><label for="assocTo">To</label></div>
+            <div class="form-input">
+                <select id="assocTo" name="assocTo" type="text"></select>
                 <div class="form-input-message">
                 </div>
             </div>
@@ -141,6 +141,63 @@
         function adjustAttributesOnClasses() {
             var div = document.getElementById("classes");
             var templateNode = document.getElementById("classTemplate");
+            for (var i in div.children) {
+                if (div.children[i].nodeType == 1) {
+                    adjustAttributes(div.children[i], templateNode, i);
+                }
+            }
+        }
+
+        function removeAssoc(b) {
+            b.parentElement.parentElement.remove();
+            adjustAttributesOnAssocs();
+        }
+
+        function initAssoc(i, o) {
+            var templateNode = document.getElementById("assocTemplate");
+            var node = templateNode.cloneNode(true);
+            node.removeAttribute("hidden");
+            node.setAttribute("class", "form-section");
+            initField(node.children.item(1).children.item(1), o.assocFrom);
+            initField(node.children.item(2).children.item(1), o.assocTo);
+            adjustAttributes(node, templateNode, i);
+            document.getElementById("associations").appendChild(node);
+        }
+
+        function initField(node, o) {
+            node.children.item(0).setAttribute("value", o.value);
+            var options = node.children.item(0).children;
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].nodeType == 1) {
+                    if (options[i].getAttribute("value") == o.value) {
+                        options[i].setAttribute("selected", "");
+                    } else {
+                        options[i].removeAttribute();
+                    }
+                }
+            }
+            node.setAttribute("class", o.valid ? "form-input" : "form-input-active form-input");
+            node.children.item(1).innerHTML = o.message;
+        }
+
+        function addAssoc() {
+            initAssoc(assocCount(), { "assocFrom": {value: "", "valid": true, "message": "" }, "assocTo": {value: "", "valid": true, "message": "" }} );
+        }
+
+        function assocCount() {
+            var c = 0;
+            var node = document.getElementById("associations");
+            for (var i in node.children) {
+                if (node.children[i].nodeType == 1) {
+                    c++;
+                }
+            }
+            return c;
+        }
+
+        function adjustAttributesOnAssocs() {
+            var div = document.getElementById("associations");
+            var templateNode = document.getElementById("assocTemplate");
             for (var i in div.children) {
                 if (div.children[i].nodeType == 1) {
                     adjustAttributes(div.children[i], templateNode, i);
