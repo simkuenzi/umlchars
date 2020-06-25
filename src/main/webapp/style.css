@@ -148,7 +148,7 @@ button, input[type=submit] {
   font-weight: bold;
 }
 
-button:hover, input[type=submit]:hover {
+button:hover, input[type=submit]:hover, button:focus, input[type=submit]:focus {
   background-color: #C3EC00;
 }
 
