@@ -41,8 +41,7 @@ public class IntegerField implements FormField<Integer> {
     @NotNull
     @Override
     public String name() {
-        // TODO Take from field value
-        return "classCount";
+        return value.name();
     }
 
     @Override
