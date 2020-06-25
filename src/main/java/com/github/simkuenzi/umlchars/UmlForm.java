@@ -1,23 +1,16 @@
 package com.github.simkuenzi.umlchars;
 
-import com.github.simkuenzi.restforms.FormField;
-import com.github.simkuenzi.restforms.FormValue;
-import com.github.simkuenzi.restforms.MandatoryField;
-import com.github.simkuenzi.restforms.TextField;
-
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class UmlForm {
 
     private static final Pattern CLASS_NAME_FIELD_PATTERN = Pattern.compile("className(\\d+)");
     private static final Pattern ASSOC_FROM_FIELD_PATTERN = Pattern.compile("assocFrom(\\d+)");
-    private static final Pattern ASSOC_TO_FIELD_PATTERN = Pattern.compile("assocTo(\\d+)");
 
     private MultivaluedMap<String, String> rawForm;
 
@@ -36,22 +29,17 @@ public class UmlForm {
     }
 
     public boolean valid() {
-        return classNames().stream().allMatch(FormField::valid);
+        return getClasses().stream().map(ClassForm::getClassName).allMatch(FieldForm::getValid);
     }
 
-    public List<FormField<String>> classNames() {
+    public List<ClassForm> getClasses() {
         int fieldCount = (int) rawForm.keySet().stream().filter(x -> CLASS_NAME_FIELD_PATTERN.matcher(x).matches()).count();
-        return IntStream.range(0, fieldCount).mapToObj(i -> new MandatoryField(new TextField(new FormValue("className" + i, rawForm)), "Provide some text here")).collect(Collectors.toList());
+        return IntStream.range(0, fieldCount).mapToObj(i ->new ClassForm(rawForm, i)).collect(Collectors.toList());
     }
 
-    public List<FormField<String>> assocFroms() {
+    public List<AssocForm> getAssocs() {
         int fieldCount = (int) rawForm.keySet().stream().filter(x -> ASSOC_FROM_FIELD_PATTERN.matcher(x).matches()).count();
-        return IntStream.range(0, fieldCount).mapToObj(i -> new MandatoryField(new TextField(new FormValue("assocFrom" + i, rawForm)), "Provide some text here")).collect(Collectors.toList());
-    }
-
-    public List<FormField<String>> assocTos() {
-        int fieldCount = (int) rawForm.keySet().stream().filter(x -> ASSOC_TO_FIELD_PATTERN.matcher(x).matches()).count();
-        return IntStream.range(0, fieldCount).mapToObj(i -> new MandatoryField(new TextField(new FormValue("assocTo" + i, rawForm)), "Provide some text here")).collect(Collectors.toList());
+        return IntStream.range(0, fieldCount).mapToObj(i -> new AssocForm(rawForm, i)).collect(Collectors.toList());
     }
 
     public String message() {

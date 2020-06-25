@@ -35,7 +35,7 @@ public class Home extends Controller {
         Map<String, Object> vars = new HashMap<>();
         vars.put("form", form);
         if (form.valid()) {
-            vars.put("uml", new ClassDiag(form.classNames().stream().map(FormField::value).collect(Collectors.toList()), Collections.emptyList()).asText());
+            vars.put("uml", new ClassDiag(form.getClasses().stream().map(x -> x.getClassName().getValue()).collect(Collectors.toList()), Collections.emptyList()).asText());
         }
         return Response.ok(render("home", vars), MediaType.TEXT_HTML).build();
     }

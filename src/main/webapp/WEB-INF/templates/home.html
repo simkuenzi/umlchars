@@ -85,41 +85,17 @@
     </div>
 
     <script language="JavaScript" th:inline="javascript">
-        var classNames = [
-            /*[# th:each="className, stat : ${form.classNames}"]*/
-            {
-                "value": /*[[${className.value}]]*/ "",
-                "valid": /*[[${className.valid}]]*/ true,
-                "message": /*[[${className.message}]]*/ ""
-            } /*[(${stat.size-1 > stat.index} ? ',':'')]*/
-            /*[/]*/
-        ];
-
-        var assocs = [
-            /*[# th:each="assocFrom, stat : ${form.assocFroms}"]*/
-            {
-                "assocFrom": {
-                    "value": /*[[${assocFrom.value}]]*/ "",
-                    "valid": /*[[${assocFrom.valid}]]*/ true,
-                    "message": /*[[${assocFrom.message}]]*/ ""
-                },
-                "assocTo": {
-                    "value": /*[[${form.assocTos[stat.index].value}]]*/ "",
-                    "valid": /*[[${form.assocTos[stat.index].valid}]]*/ true,
-                    "message": /*[[${form.assocTos[stat.index].message}]]*/ ""
-                }
-            } /*[(${stat.size-1 > stat.index} ? ',':'')]*/
-            /*[/]*/
-        ];
+        var classNames = /*[[${form.classes}]]*/ [];
+        var assocs = /*[[${form.assocs}]]*/ [];
     </script>
 
     <script language="JavaScript">
         var classesEditor = new ListEditor("classTemplate", "classes",
             function(e, node, o) {
-                e.initField(node.children.item(1).children.item(1), o);
+                e.initField(node.children.item(1).children.item(1), o.className);
             },
             function() {
-                return { "value": "", "valid": true, "message": "" };
+                return { "className": {"value": "", "valid": true, "message": "" }};
             }
         );
 
