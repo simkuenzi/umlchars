@@ -1,9 +1,11 @@
 package com.github.simkuenzi.umlchars;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 class ClassDiag {
 
@@ -47,7 +49,11 @@ class ClassDiag {
     }
 
     private boolean assocExists(String classNameA, String classNameB) {
-        return associations.stream().anyMatch(a -> a.equals(new Association(classNameA, classNameB)));
+        return normalizedAssociation().anyMatch(a -> a.equals(new Association(classNameA, classNameB)));
+    }
+
+    private Stream<Association> normalizedAssociation() {
+        return associations.stream().map(a -> a.normalized(classNames));
     }
 
     private String repeat(char c, int length) {

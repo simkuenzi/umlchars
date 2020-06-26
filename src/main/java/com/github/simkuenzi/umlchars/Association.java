@@ -1,5 +1,7 @@
 package com.github.simkuenzi.umlchars;
 
+import java.util.List;
+
 public class Association {
     private String classNameA;
     private String classNameB;
@@ -16,5 +18,13 @@ public class Association {
             return classNameA.equals(other.classNameA) && classNameB.equals(other.classNameB);
         }
         return false;
+    }
+
+    public Association normalized(List<String> classNames) {
+        if (classNames.indexOf(classNameA) > classNames.indexOf(classNameB)) {
+            return new Association(classNameB, classNameA);
+        } else {
+            return this;
+        }
     }
 }
