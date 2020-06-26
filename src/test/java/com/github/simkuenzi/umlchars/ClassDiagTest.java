@@ -44,4 +44,53 @@ public class ClassDiagTest {
                         Collections.singletonList(new Association("World", "Hello"))
                 ).asText());
     }
+
+    @Test
+    public void helloToWorldAndUml() {
+        assertEquals("" +
+                        "    +----------------------+   \n" +
+                        "    |                      |   \n" +
+                        "+-------+   +-------+   +-----+\n" +
+                        "| Hello |---| World |   | UML |\n" +
+                        "+-------+   +-------+   +-----+",
+                new ClassDiag(
+                        Arrays.asList("Hello", "World", "UML"),
+                        Arrays.asList(
+                                new Association("World", "Hello"),
+                                new Association("Hello", "UML"))
+                ).asText());
+    }
+
+    @Test
+    public void hiToWorldAndCool() {
+        assertEquals("" +
+                        "  +---------------------+    \n" +
+                        "  |                     |    \n" +
+                        "+----+   +-------+   +------+\n" +
+                        "| Hi |---| World |   | Cool |\n" +
+                        "+----+   +-------+   +------+",
+                new ClassDiag(
+                        Arrays.asList("Hi", "World", "Cool"),
+                        Arrays.asList(
+                                new Association("Hi", "World"),
+                                new Association("Hi", "Cool"))
+                ).asText());
+    }
+
+    @Test
+    public void helloMyNiceWorld() {
+        assertEquals("" +
+                        "              +---------------------+    \n" +
+                        "              |                     |    \n" +
+                        "+-------+   +----+   +------+   +-------+\n" +
+                        "| Hello |---| my |---| nice |   | World |\n" +
+                        "+-------+   +----+   +------+   +-------+",
+                new ClassDiag(
+                        Arrays.asList("Hello", "my", "nice", "World"),
+                        Arrays.asList(
+                                new Association("Hello", "my"),
+                                new Association("my", "World"),
+                                new Association("nice", "my"))
+                ).asText());
+    }
 }

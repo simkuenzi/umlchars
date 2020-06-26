@@ -27,4 +27,28 @@ public class Association {
             return this;
         }
     }
+
+    public boolean startsFrom(int here, List<String> classNames) {
+        return classNames.get(here).equals(classNameA);
+    }
+
+    public boolean endsNextFrom(int here, List<String> classNames) {
+        return classNames.indexOf(classNameB) == here + 1;
+    }
+
+    public boolean startsBefore(int here, List<String> classNames) {
+        return classNames.indexOf(classNameA) < here;
+    }
+
+    public boolean startsFarBefore(int here, List<String> classNames) {
+        return classNames.indexOf(classNameA) < here - 1;
+    }
+
+    public boolean endsAfter(int here, List<String> classNames) {
+        return classNames.indexOf(classNameB) > here;
+    }
+
+    public boolean ends(int here, List<String> classNames) {
+        return classNames.indexOf(classNameB) == here;
+    }
 }
