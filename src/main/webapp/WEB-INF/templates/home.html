@@ -10,8 +10,8 @@
     <form class="form" method="post">
 
         <div class="tab">
-            <button class="tab-button-active" type="button" onclick="showTab(this, 'classes-tab')">Classes</button>
-            <button class="tab-button" type="button" onclick="showTab(this, 'associations-tab')">Associations</button>
+            <button id="classes-tab-btn" class="tab-button-active" type="button" onclick="showTab(this, 'classes-tab')">Classes</button>
+            <button id="assocs-tab-btn" class="assocs-tab-btn" type="button" onclick="showTab(this, 'associations-tab')">Associations</button>
         </div>
 
         <div id="classes-tab" class="tab-content-active">
@@ -32,6 +32,8 @@
             <span class="form-action-message" th:if="${form.valid} == false" th:text="${form.message}">Invalid Input</span>
             <button type="submit">Submit</button>
         </div>
+
+        <input id="selectedTab" name="selectedTab" value="classes-tab-btn" th:value="${form.selectedTab}" type="hidden" />
     </form>
 
     <div>
@@ -119,6 +121,7 @@
                 tabs.children[i].setAttribute("class", "tab-button");
             }
             b.setAttribute("class", "tab-button-active");
+            document.getElementById("selectedTab").value = b.id;
         }
 
         function updateClassSelect() {
@@ -158,6 +161,8 @@
         if (classesEditor.count() == 0) {
             classesEditor.add();
         }
+
+        document.getElementById(document.getElementById("selectedTab").value).onclick();
 
     </script>
 

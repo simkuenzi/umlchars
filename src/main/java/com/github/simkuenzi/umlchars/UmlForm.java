@@ -24,7 +24,7 @@ public class UmlForm {
 
     UmlForm noValidation() {
         MultivaluedMap<String, String> rawForm = new MultivaluedHashMap<>();
-        rawForm.add("classCount", "0");
+        rawForm.add("selectedTab", "classes-tab-btn");
         return new UmlForm(rawForm);
     }
 
@@ -34,12 +34,16 @@ public class UmlForm {
 
     public List<ClassForm> getClasses() {
         int fieldCount = (int) rawForm.keySet().stream().filter(x -> CLASS_NAME_FIELD_PATTERN.matcher(x).matches()).count();
-        return IntStream.range(0, fieldCount).mapToObj(i ->new ClassForm(rawForm, i)).collect(Collectors.toList());
+        return IntStream.range(0, fieldCount).mapToObj(i -> new ClassForm(rawForm, i)).collect(Collectors.toList());
     }
 
     public List<AssocForm> getAssocs() {
         int fieldCount = (int) rawForm.keySet().stream().filter(x -> ASSOC_FROM_FIELD_PATTERN.matcher(x).matches()).count();
         return IntStream.range(0, fieldCount).mapToObj(i -> new AssocForm(rawForm, i)).collect(Collectors.toList());
+    }
+
+    public String getSelectedTab() {
+        return rawForm.getFirst("selectedTab");
     }
 
     public String message() {
