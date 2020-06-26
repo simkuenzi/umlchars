@@ -8,11 +8,13 @@ class ListEditor {
 
     add() {
         this.init(this.count(), this.inital());
+        this.onAdd();
     }
 
     remove(b) {
         b.parentElement.parentElement.remove();
         this.adjustAllAttributes();
+        this.onRemove();
     }
 
     init(i, o) {
@@ -27,16 +29,11 @@ class ListEditor {
 
     initField(node, o) {
         if (node.children.item(0).nodeName == "SELECT") {
-            var options = node.children.item(0).children;
-            for (var i = 0; i < options.length; i++) {
-                if (options[i].nodeType == 1) {
-                    if (options[i].getAttribute("value") == o.value) {
-                        options[i].setAttribute("selected", "");
-                    } else {
-                        options[i].removeAttribute("selected");
-                    }
-                }
-            }
+            var option = document.createElement("option");
+            option.selected = true;
+            option.setAttribute("value", o.value);
+            option.appendChild(document.createTextNode(o.value));
+            node.children.item(0).appendChild(option);
         } else {
             node.children.item(0).setAttribute("value", o.value);
         }
@@ -82,4 +79,8 @@ class ListEditor {
             node.setAttribute(attributeName, templateNode.getAttribute(attributeName) + index);
         }
     }
+
+    onAdd() {}
+
+    onRemove() {}
 }
