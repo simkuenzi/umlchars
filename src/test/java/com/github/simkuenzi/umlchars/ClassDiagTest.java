@@ -14,7 +14,7 @@ public class ClassDiagTest {
         assertEquals("" +
                         "+-------+   +-------+\n" +
                         "| Hello |---| World |\n" +
-                        "+-------+   +-------+",
+                        "+-------+   +-------+\n",
                 new ClassDiag(
                         Arrays.asList("Hello", "World"),
                         Collections.singletonList(new Association("Hello", "World"))
@@ -26,7 +26,7 @@ public class ClassDiagTest {
         assertEquals("" +
                         "+-------+   +-------+   +-----+\n" +
                         "| Hello |---| World |   | UML |\n" +
-                        "+-------+   +-------+   +-----+",
+                        "+-------+   +-------+   +-----+\n",
                 new ClassDiag(
                         Arrays.asList("Hello", "World", "UML"),
                         Collections.singletonList(new Association("Hello", "World"))
@@ -38,7 +38,7 @@ public class ClassDiagTest {
         assertEquals("" +
                         "+-------+   +-------+   +-----+\n" +
                         "| Hello |---| World |   | UML |\n" +
-                        "+-------+   +-------+   +-----+",
+                        "+-------+   +-------+   +-----+\n",
                 new ClassDiag(
                         Arrays.asList("Hello", "World", "UML"),
                         Collections.singletonList(new Association("World", "Hello"))
@@ -52,7 +52,7 @@ public class ClassDiagTest {
                         "    |                      |   \n" +
                         "+-------+   +-------+   +-----+\n" +
                         "| Hello |---| World |   | UML |\n" +
-                        "+-------+   +-------+   +-----+",
+                        "+-------+   +-------+   +-----+\n",
                 new ClassDiag(
                         Arrays.asList("Hello", "World", "UML"),
                         Arrays.asList(
@@ -68,7 +68,7 @@ public class ClassDiagTest {
                         "  |                     |    \n" +
                         "+----+   +-------+   +------+\n" +
                         "| Hi |---| World |   | Cool |\n" +
-                        "+----+   +-------+   +------+",
+                        "+----+   +-------+   +------+\n",
                 new ClassDiag(
                         Arrays.asList("Hi", "World", "Cool"),
                         Arrays.asList(
@@ -84,12 +84,32 @@ public class ClassDiagTest {
                         "              |                     |    \n" +
                         "+-------+   +----+   +------+   +-------+\n" +
                         "| Hello |---| my |---| nice |   | World |\n" +
-                        "+-------+   +----+   +------+   +-------+",
+                        "+-------+   +----+   +------+   +-------+\n",
                 new ClassDiag(
                         Arrays.asList("Hello", "my", "nice", "World"),
                         Arrays.asList(
                                 new Association("Hello", "my"),
                                 new Association("my", "World"),
+                                new Association("nice", "my"))
+                ).asText());
+    }
+
+    @Test
+    public void topAndBottom() {
+        assertEquals("" +
+                        "    +-------------------+                \n" +
+                        "    |                   |                \n" +
+                        "+-------+   +----+   +------+   +-------+\n" +
+                        "| Hello |---| my |---| nice |   | World |\n" +
+                        "+-------+   +----+   +------+   +-------+\n" +
+                        "              |                     |    \n" +
+                        "              +---------------------+    \n",
+                new ClassDiag(
+                        Arrays.asList("Hello", "my", "nice", "World"),
+                        Arrays.asList(
+                                new Association("Hello", "my"),
+                                new Association("my", "World"),
+                                new Association("Hello", "nice"),
                                 new Association("nice", "my"))
                 ).asText());
     }

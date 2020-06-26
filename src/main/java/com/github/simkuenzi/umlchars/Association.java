@@ -51,4 +51,12 @@ public class Association {
     public boolean ends(int here, List<String> classNames) {
         return classNames.indexOf(classNameB) == here;
     }
+
+    public int sortOrder(List<String> classNames) {
+        return classNames.indexOf(classNameA);
+    }
+
+    public boolean isFar(List<String> classNames) {
+        return classNames.indexOf(classNameB) - classNames.indexOf(classNameA) > 1;
+    }
 }
