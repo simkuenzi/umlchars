@@ -4,6 +4,7 @@ package com.github.simkuenzi.umlchars;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -22,23 +23,7 @@ class ClassDiag {
         StringWriter writer = new StringWriter();
         PrintWriter out = new PrintWriter(writer);
 
-        int topAssocCount = IntStream.range(0, classNames.size()).map(i -> (int) intersect(assocsHereToFar(i), farOddAssocs()).count()).sum();
-        if (topAssocCount > 0) {
-            List<CharStamp> stamps = new ArrayList<>();
-            for (int i = 0; i < classNames.size(); i++) {
-                int boxWidth = classNames.get(i).length() + 4;
-                if (intersect(assocsHereToFar(i), farOddAssocs()).count() > 0) {
-                    stamps.add(new TopBegin(boxWidth));
-                } else if (intersect(assocsFarToFar(i), farOddAssocs()).count() > 0) {
-                    stamps.add(new TopMiddle(boxWidth));
-                } else if (intersect(assocsFarToHere(i), farOddAssocs()).count() > 0) {
-                    stamps.add(new TopEnd(boxWidth));
-                } else {
-                    stamps.add(new Empty(boxWidth));
-                }
-            }
-            new StampRow(stamps).stamp(out);
-        }
+        drawFarAssocs(out, farOddAssocs().collect(Collectors.toList()), TopBegin::new, TopMiddle::new, TopEnd::new, (i, c) -> i);
 
         for (int i = 0; i < classNames.size(); i++) {
             out.print("+");
@@ -74,27 +59,60 @@ class ClassDiag {
         }
         out.print("\n");
 
-        int bottomAssocCount = IntStream.range(0, classNames.size()).map(i -> (int) intersect(assocsHereToFar(i), farEvenAssocs()).count()).sum();
-        if (bottomAssocCount > 0) {
-            List<CharStamp> stamps = new ArrayList<>();
-            for (int i = 0; i < classNames.size(); i++) {
-                int boxWidth = classNames.get(i).length() + 4;
-                if (intersect(assocsHereToFar(i), farEvenAssocs()).count() > 0) {
-                    stamps.add(new VerticalMirror(new TopBegin(boxWidth)));
-                } else if (intersect(assocsFarToFar(i), farEvenAssocs()).count() > 0) {
-                    stamps.add(new VerticalMirror(new TopMiddle(boxWidth)));
-                } else if (intersect(assocsFarToHere(i), farEvenAssocs()).count() > 0) {
-                    stamps.add(new VerticalMirror(new TopEnd(boxWidth)));
-                } else {
-                    stamps.add(new Empty(boxWidth));
-                }
-            }
-            new StampRow(stamps).stamp(out);
-        }
-
+        drawFarAssocs(out, farEvenAssocs().collect(Collectors.toList()), w -> new VerticalMirror(new TopBegin(w)),
+                w -> new VerticalMirror(new TopMiddle(w)), w -> new VerticalMirror(new TopEnd(w)),
+                (i, c) -> c - i - 1);
 
         out.flush();
         return writer.toString();
+    }
+
+    private void drawFarAssocs(PrintWriter out, List<Association> assocs, Function<Integer, CharStamp> begin,
+                               Function<Integer, CharStamp> middle, Function<Integer, CharStamp> end, RowOrder order) {
+        if (assocs.size() > 0) {
+            List<StampRow> rows = new ArrayList<>();
+            List<Association> drawnAssocs = new ArrayList<>();
+
+            while (drawnAssocs.size() != assocs.size()) {
+                List<CharStamp> stamps = new ArrayList<>();
+                boolean assocOpen = false;
+                List<Association> drawnHereAssocs = new ArrayList<>();
+                for (int i = 0; i < classNames.size(); i++) {
+                    int boxWidth = classNames.get(i).length() + 4;
+                    List<CharStamp> composite = new ArrayList<>();
+
+                    for (Association a : intersect(assocsHereToFar(i), assocs.stream()).collect(Collectors.toList())) {
+                        if (drawnAssocs.contains(a)) {
+                            composite.add(new Vertical(boxWidth));
+                        } else if (!assocOpen) {
+                            assocOpen = true;
+                            drawnAssocs.add(a);
+                            drawnHereAssocs.add(a);
+                            composite.add(begin.apply(boxWidth));
+                        }
+                    }
+
+                    for (Association a : intersect(assocsFarToHere(i), assocs.stream()).collect(Collectors.toList())) {
+                        if(drawnHereAssocs.contains(a)) {
+                            composite.add(end.apply(boxWidth));
+                            assocOpen = false;
+                        } else if (drawnAssocs.contains(a)) {
+                            composite.add(new Vertical(boxWidth));
+                        }
+                    }
+
+                    for (Association a : intersect(assocsFarToFar(i), assocs.stream()).filter(drawnHereAssocs::contains).collect(Collectors.toList())) {
+                        composite.add(middle.apply(boxWidth));
+                    }
+                    composite.add(new Empty(boxWidth));
+                    stamps.add(new CompositeStamp(composite));
+                }
+
+                rows.add(new StampRow(stamps));
+            }
+
+            IntStream.range(0, rows.size()).map(i -> order.sortKey(i, rows.size())).mapToObj(rows::get).forEach(r -> r.stamp(out));
+        }
     }
 
     private Stream<Association> intersect(Stream<Association> a, Stream<Association> b) {
@@ -139,5 +157,9 @@ class ClassDiag {
         char[] chars = new char[length];
         Arrays.fill(chars, c);
         return new String(chars);
+    }
+
+    private interface RowOrder {
+        int sortKey(int i, int size);
     }
 }

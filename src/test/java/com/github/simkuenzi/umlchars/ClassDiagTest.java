@@ -113,4 +113,101 @@ public class ClassDiagTest {
                                 new Association("nice", "my"))
                 ).asText());
     }
+
+    @Test
+    public void manyAssocsTop() {
+        assertEquals("" +
+                        "    +-------------------+                \n" +
+                        "    |                   |                \n" +
+                        "    |         +---------------------+    \n" +
+                        "    |         |         |           |    \n" +
+                        "+-------+   +----+   +------+   +-------+\n" +
+                        "| Hello |---| my |---| nice |   | World |\n" +
+                        "+-------+   +----+   +------+   +-------+\n" +
+                        "    |                               |    \n" +
+                        "    +-------------------------------+    \n",
+                new ClassDiag(
+                        Arrays.asList("Hello", "my", "nice", "World"),
+                        Arrays.asList(
+                                new Association("Hello", "my"),
+                                new Association("Hello", "nice"),
+                                new Association("Hello", "World"),
+                                new Association("my", "nice"),
+                                new Association("my", "World"))
+                ).asText());
+    }
+
+
+    @Test
+    public void manyAssocs() {
+        assertEquals("" +
+                        "    +------------------------------------------+    \n" +
+                        "    |                                          |    \n" +
+                        "    |         +--------------------+           |    \n" +
+                        "    |         |                    |           |    \n" +
+                        "+-------+   +----+   +------+   +------+   +-------+\n" +
+                        "| Hello |---| my |---| very |   | nice |   | World |\n" +
+                        "+-------+   +----+   +------+   +------+   +-------+\n" +
+                        "    |         |         |                      |    \n" +
+                        "    |         +--------------------------------+    \n" +
+                        "    |                   |                           \n" +
+                        "    +-------------------+                           \n",
+                new ClassDiag(
+                        Arrays.asList("Hello", "my", "very", "nice", "World"),
+                        Arrays.asList(
+                                new Association("Hello", "my"),
+                                new Association("Hello", "World"),
+                                new Association("Hello", "very"),
+                                new Association("my", "very"),
+                                new Association("my", "nice"),
+                                new Association("my", "World"))
+                ).asText());
+    }
+
+    @Test
+    public void manyAssocsNoCrossing() {
+        assertEquals("" +
+                        "    +-------------------+           +----------------------+    \n" +
+                        "    |                   |           |                      |    \n" +
+                        "+-------+   +----+   +------+   +-------+   +------+   +-------+\n" +
+                        "| Hello |---| my |   | very |---| super |   | nice |   | World |\n" +
+                        "+-------+   +----+   +------+   +-------+   +------+   +-------+\n" +
+                        "              |                                |                \n" +
+                        "              +--------------------------------+                \n",
+                new ClassDiag(
+                        Arrays.asList("Hello", "my", "very", "super", "nice", "World"),
+                        Arrays.asList(
+                                new Association("Hello", "my"),
+                                new Association("Hello", "very"),
+                                new Association("my", "nice"),
+                                new Association("very", "super"),
+                                new Association("super", "World"))
+                ).asText());
+    }
+
+
+    @Test
+    public void multipleAssocsSameDirection() {
+        assertEquals("" +
+                        "    +--------------------------------+           \n" +
+                        "    |                                |           \n" +
+                        "    +----------------------------------------+   \n" +
+                        "    |                                |       |   \n" +
+                        "+-------+   +------+   +-------+   +---+   +----+\n" +
+                        "| Hello |---| nice |   | World |   | ! |   | :) |\n" +
+                        "+-------+   +------+   +-------+   +---+   +----+\n" +
+                        "    |          |           |         |           \n" +
+                        "    |          +---------------------+           \n" +
+                        "    |                      |                     \n" +
+                        "    +----------------------+                     \n",
+                new ClassDiag(
+                        Arrays.asList("Hello", "nice", "World", "!", ":)"),
+                        Arrays.asList(
+                                new Association("Hello", "!"),
+                                new Association("Hello", "World"),
+                                new Association("nice", "Hello"),
+                                new Association("nice", "!"),
+                                new Association("Hello", ":)"))
+                ).asText());
+    }
 }
