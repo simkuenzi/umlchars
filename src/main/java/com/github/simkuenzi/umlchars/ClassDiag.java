@@ -23,7 +23,7 @@ class ClassDiag {
         StringWriter writer = new StringWriter();
         PrintWriter out = new PrintWriter(writer);
 
-        drawFarAssocs(out, farOddAssocs().collect(Collectors.toList()), TopBegin::new, TopMiddle::new, TopEnd::new, (i, c) -> i);
+        drawRectAssocs(out, topAssocs().collect(Collectors.toList()), TopBegin::new, TopMiddle::new, TopEnd::new, (i, c) -> i);
 
         for (int i = 0; i < classNames.size(); i++) {
             out.print("+");
@@ -40,7 +40,7 @@ class ClassDiag {
             out.print(classNames.get(i));
             out.print(" |");
             if (i < classNames.size() - 1) {
-                if (assocExists(classNames.get(i), classNames.get(i + 1))) {
+                if (assocCenter(i).isPresent()) {
                     out.print("---");
                 } else {
                     out.print("   ");
@@ -59,7 +59,7 @@ class ClassDiag {
         }
         out.print("\n");
 
-        drawFarAssocs(out, farEvenAssocs().collect(Collectors.toList()), w -> new VerticalMirror(new TopBegin(w)),
+        drawRectAssocs(out, bottomAssocs().collect(Collectors.toList()), w -> new VerticalMirror(new TopBegin(w)),
                 w -> new VerticalMirror(new TopMiddle(w)), w -> new VerticalMirror(new TopEnd(w)),
                 (i, c) -> c - i - 1);
 
@@ -67,8 +67,8 @@ class ClassDiag {
         return writer.toString();
     }
 
-    private void drawFarAssocs(PrintWriter out, List<Association> assocs, Function<Integer, CharStamp> begin,
-                               Function<Integer, CharStamp> middle, Function<Integer, CharStamp> end, RowOrder order) {
+    private void drawRectAssocs(PrintWriter out, List<Association> assocs, Function<Integer, CharStamp> begin,
+                                Function<Integer, CharStamp> middle, Function<Integer, CharStamp> end, RowOrder order) {
         if (assocs.size() > 0) {
             List<StampRow> rows = new ArrayList<>();
             List<Association> drawnAssocs = new ArrayList<>();
@@ -78,10 +78,11 @@ class ClassDiag {
                 boolean assocOpen = false;
                 List<Association> drawnHereAssocs = new ArrayList<>();
                 for (int i = 0; i < classNames.size(); i++) {
+                    final int here = i;
                     int boxWidth = classNames.get(i).length() + 4;
                     List<CharStamp> composite = new ArrayList<>();
 
-                    for (Association a : intersect(assocsHereToFar(i), assocs.stream()).collect(Collectors.toList())) {
+                    for (Association a : assocs.stream().filter(x -> x.isFromHere(here, classNames)).collect(Collectors.toList())) {
                         if (drawnAssocs.contains(a)) {
                             composite.add(new Vertical(boxWidth));
                         } else if (!assocOpen) {
@@ -92,7 +93,7 @@ class ClassDiag {
                         }
                     }
 
-                    for (Association a : intersect(assocsFarToHere(i), assocs.stream()).collect(Collectors.toList())) {
+                    for (Association a : assocs.stream().filter(x -> x.isToHere(here, classNames)).collect(Collectors.toList())) {
                         if(drawnHereAssocs.contains(a)) {
                             composite.add(end.apply(boxWidth));
                             assocOpen = false;
@@ -101,7 +102,7 @@ class ClassDiag {
                         }
                     }
 
-                    for (Association a : intersect(assocsFarToFar(i), assocs.stream()).filter(drawnHereAssocs::contains).collect(Collectors.toList())) {
+                    for (Association a : assocs.stream().filter(x -> x.isThroughHere(here, classNames)).filter(drawnHereAssocs::contains).collect(Collectors.toList())) {
                         composite.add(middle.apply(boxWidth));
                     }
                     composite.add(new Empty(boxWidth));
@@ -115,42 +116,36 @@ class ClassDiag {
         }
     }
 
-    private Stream<Association> intersect(Stream<Association> a, Stream<Association> b) {
-        return a.filter(b.collect(Collectors.toList())::contains);
+    private Optional<Association> assocCenter(int here) {
+        return assocsHereToNext(here).findFirst();
     }
 
-    private Stream<Association> assocsHereToFar(int here) {
-        return normalizedAssociations().filter(a -> a.startsFrom(here, classNames)).filter(a -> !a.endsNextFrom(here, classNames));
-    }
-
-    private Stream<Association> assocsFarToFar(int here) {
-        return normalizedAssociations().filter(a -> a.startsBefore(here, classNames)).filter(a -> a.endsAfter(here, classNames));
-    }
-
-    private Stream<Association> assocsFarToHere(int here) {
-        return normalizedAssociations().filter(a -> a.ends(here, classNames)).filter(a -> a.startsFarBefore(here, classNames));
-    }
-
-    private boolean assocExists(String classNameA, String classNameB) {
-        return normalizedAssociations().anyMatch(a -> a.equals(new Association(classNameA, classNameB)));
+    private Stream<Association> assocsHereToNext(int here) {
+        return normalizedAssociations().filter(a -> a.startsFrom(here, classNames)).filter(a -> !a.isFar(classNames));
     }
 
     private Stream<Association> normalizedAssociations() {
         return associations.stream().map(a -> a.normalized(classNames));
     }
 
-    private Stream<Association> farAssocs() {
-        return normalizedAssociations().filter(a -> a.isFar(classNames));
+
+    private Stream<Association> centerAssocs() {
+        return IntStream.range(0, classNames.size()).mapToObj(this::assocCenter).filter(Optional::isPresent).map(Optional::get);
     }
 
-    private Stream<Association> farEvenAssocs() {
-        List<Association> far = farAssocs().sorted(Comparator.comparing(a -> a.sortOrder(classNames))).collect(Collectors.toList());
-        return IntStream.range(0, far.size()).filter(i -> (i+1) % 2 == 0).mapToObj(far::get);
+    private Stream<Association> rectAssocs() {
+        List<Association> center = centerAssocs().collect(Collectors.toList());
+        return normalizedAssociations().filter(a -> !center.contains(a)).sorted(Comparator.comparing(a -> a.sortOrder(classNames)));
     }
 
-    private Stream<Association> farOddAssocs() {
-        List<Association> far = farAssocs().sorted(Comparator.comparing(a -> a.sortOrder(classNames))).collect(Collectors.toList());
-        return IntStream.range(0, far.size()).filter(i -> (i+1) % 2 == 1).mapToObj(far::get);
+    private Stream<Association> bottomAssocs() {
+        List<Association> rect = rectAssocs().collect(Collectors.toList());
+        return IntStream.range(0, rect.size()).filter(i -> (i+1) % 2 == 0).mapToObj(rect::get);
+    }
+
+    private Stream<Association> topAssocs() {
+        List<Association> rect = rectAssocs().collect(Collectors.toList());
+        return IntStream.range(0, rect.size()).filter(i -> (i+1) % 2 == 1).mapToObj(rect::get);
     }
 
     private String repeat(char c, int length) {

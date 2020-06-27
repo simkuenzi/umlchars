@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ClassDiagTest {
 
@@ -208,6 +208,43 @@ public class ClassDiagTest {
                                 new Association("nice", "Hello"),
                                 new Association("nice", "!"),
                                 new Association("Hello", ":)"))
+                ).asText());
+    }
+
+    @Test
+    public void multipleFarAssocs() {
+        assertEquals("" +
+                        "  +---------------+  \n" +
+                        "  |               |  \n" +
+                        "+---+   +---+   +---+\n" +
+                        "| A |   | B |   | C |\n" +
+                        "+---+   +---+   +---+\n" +
+                        "  |               |  \n" +
+                        "  +---------------+  \n",
+                new ClassDiag(
+                        Arrays.asList("A", "B", "C"),
+                        Arrays.asList(
+                                new Association("A", "C"),
+                                new Association("A", "C"))
+                ).asText());
+    }
+
+    @Test
+    public void multipleAssocsToNext() {
+        assertEquals("" +
+                        "  +-------+  \n" +
+                        "  |       |  \n" +
+                        "+---+   +---+\n" +
+                        "| A |---| B |\n" +
+                        "+---+   +---+\n" +
+                        "  |       |  \n" +
+                        "  +-------+  \n",
+                new ClassDiag(
+                        Arrays.asList("A", "B"),
+                        Arrays.asList(
+                                new Association("A", "B"),
+                                new Association("A", "B"),
+                                new Association("A", "B"))
                 ).asText());
     }
 }
