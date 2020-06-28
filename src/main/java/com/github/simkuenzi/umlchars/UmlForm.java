@@ -29,12 +29,12 @@ public class UmlForm {
     }
 
     public boolean valid() {
-        return getClasses().stream().map(ClassForm::getClassName).allMatch(FieldForm::getValid);
+        return getClasses().stream().map(UmlClass::getClassName).allMatch(Field::getValid);
     }
 
-    public List<ClassForm> getClasses() {
+    public List<UmlClass> getClasses() {
         int fieldCount = (int) rawForm.keySet().stream().filter(x -> CLASS_NAME_FIELD_PATTERN.matcher(x).matches()).count();
-        return IntStream.range(0, fieldCount).mapToObj(i -> new ClassForm(rawForm, i)).collect(Collectors.toList());
+        return IntStream.range(0, fieldCount).mapToObj(i -> new UmlClass(rawForm, i)).collect(Collectors.toList());
     }
 
     public List<AssocForm> getAssocs() {

@@ -2,10 +2,10 @@ package com.github.simkuenzi.umlchars;
 
 import com.github.simkuenzi.restforms.FormField;
 
-public class FieldForm<T> {
+public class Field<T> {
     private FormField<T> field;
 
-    public FieldForm(FormField<T> field) {
+    public Field(FormField<T> field) {
         this.field = field;
     }
 

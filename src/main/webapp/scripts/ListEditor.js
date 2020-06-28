@@ -34,6 +34,8 @@ class ListEditor {
             option.setAttribute("value", o.value);
             option.appendChild(document.createTextNode(o.value));
             node.children.item(0).appendChild(option);
+        } else if (node.children.item(0).nodeName == "TEXTAREA") {
+            node.children.item(0).innerHTML = o.value;
         } else {
             node.children.item(0).setAttribute("value", o.value);
         }

@@ -56,6 +56,22 @@
                 </div>
             </div>
         </div>
+        <div class="form-row">
+            <div class="form-label"><label for="attributes">Attributes</label></div>
+            <div class="form-input">
+                <textarea id="attributes" name="attributes"></textarea>
+                <div class="form-input-message">
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-label"><label for="operations">Operations</label></div>
+            <div class="form-input">
+                <textarea id="operations" name="operations"></textarea>
+                <div class="form-input-message">
+                </div>
+            </div>
+        </div>
     </div>
 
     <div hidden id="assocTemplate">
@@ -90,9 +106,15 @@
         var classesEditor = new ListEditor("classTemplate", "classes",
             function(e, node, o) {
                 e.initField(node.children.item(1).children.item(1), o.className);
+                e.initField(node.children.item(2).children.item(1), o.attributes);
+                e.initField(node.children.item(3).children.item(1), o.operations);
             },
             function() {
-                return { "className": {"value": "", "valid": true, "message": "" }};
+                return {
+                    "className": {"value": "", "valid": true, "message": "" },
+                    "attributes": {"value": "", "valid": true, "message": "" },
+                    "operations": {"value": "", "valid": true, "message": "" }
+                };
             }
         );
         classesEditor.onRemove = updateClassSelect;

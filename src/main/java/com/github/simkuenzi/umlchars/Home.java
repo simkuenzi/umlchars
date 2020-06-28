@@ -33,7 +33,7 @@ public class Home extends Controller {
         vars.put("form", form);
         if (form.valid()) {
             vars.put("uml", new ClassDiag(
-                    form.getClasses().stream().map(x -> x.getClassName().getValue()).collect(Collectors.toList()),
+                    form.getClasses(),
                     form.getAssocs().stream().map(x -> new Association(x.getAssocFrom().getValue(), x.getAssocTo().getValue())).collect(Collectors.toList()))
                     .asText()
             );

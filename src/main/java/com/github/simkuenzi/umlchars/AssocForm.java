@@ -15,11 +15,11 @@ public class AssocForm {
         this.index = index;
     }
 
-    public FieldForm<String> getAssocFrom() {
-        return new FieldForm<>(new TextField(new FormValue("assocFrom" + index, rawForm)));
+    public Field<String> getAssocFrom() {
+        return new Field<>(new TextField(new FormValue("assocFrom" + index, rawForm)));
     }
 
-    public FieldForm<String> getAssocTo() {
-        return new FieldForm<>(new TextField(new FormValue("assocTo" + index, rawForm)));
+    public Field<String> getAssocTo() {
+        return new Field<>(new TextField(new FormValue("assocTo" + index, rawForm)));
     }
 }

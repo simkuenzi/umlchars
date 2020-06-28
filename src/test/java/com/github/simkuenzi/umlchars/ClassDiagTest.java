@@ -2,8 +2,13 @@ package com.github.simkuenzi.umlchars;
 
 import org.junit.Test;
 
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,7 +21,7 @@ public class ClassDiagTest {
                         "| Hello |---| World |\n" +
                         "+-------+   +-------+\n",
                 new ClassDiag(
-                        Arrays.asList("Hello", "World"),
+                        classes("Hello", "World"),
                         Collections.singletonList(new Association("Hello", "World"))
                         ).asText());
     }
@@ -28,7 +33,7 @@ public class ClassDiagTest {
                         "| Hello |---| World |   | UML |\n" +
                         "+-------+   +-------+   +-----+\n",
                 new ClassDiag(
-                        Arrays.asList("Hello", "World", "UML"),
+                        classes("Hello", "World", "UML"),
                         Collections.singletonList(new Association("Hello", "World"))
                 ).asText());
     }
@@ -40,7 +45,7 @@ public class ClassDiagTest {
                         "| Hello |---| World |   | UML |\n" +
                         "+-------+   +-------+   +-----+\n",
                 new ClassDiag(
-                        Arrays.asList("Hello", "World", "UML"),
+                        classes("Hello", "World", "UML"),
                         Collections.singletonList(new Association("World", "Hello"))
                 ).asText());
     }
@@ -54,7 +59,7 @@ public class ClassDiagTest {
                         "| Hello |---| World |   | UML |\n" +
                         "+-------+   +-------+   +-----+\n",
                 new ClassDiag(
-                        Arrays.asList("Hello", "World", "UML"),
+                        classes("Hello", "World", "UML"),
                         Arrays.asList(
                                 new Association("World", "Hello"),
                                 new Association("Hello", "UML"))
@@ -70,7 +75,7 @@ public class ClassDiagTest {
                         "| Hi |---| World |   | Cool |\n" +
                         "+----+   +-------+   +------+\n",
                 new ClassDiag(
-                        Arrays.asList("Hi", "World", "Cool"),
+                        classes("Hi", "World", "Cool"),
                         Arrays.asList(
                                 new Association("Hi", "World"),
                                 new Association("Hi", "Cool"))
@@ -86,7 +91,7 @@ public class ClassDiagTest {
                         "| Hello |---| my |---| nice |   | World |\n" +
                         "+-------+   +----+   +------+   +-------+\n",
                 new ClassDiag(
-                        Arrays.asList("Hello", "my", "nice", "World"),
+                        classes("Hello", "my", "nice", "World"),
                         Arrays.asList(
                                 new Association("Hello", "my"),
                                 new Association("my", "World"),
@@ -105,7 +110,7 @@ public class ClassDiagTest {
                         "              |                     |    \n" +
                         "              +---------------------+    \n",
                 new ClassDiag(
-                        Arrays.asList("Hello", "my", "nice", "World"),
+                        classes("Hello", "my", "nice", "World"),
                         Arrays.asList(
                                 new Association("Hello", "my"),
                                 new Association("my", "World"),
@@ -127,7 +132,7 @@ public class ClassDiagTest {
                         "    |                               |    \n" +
                         "    +-------------------------------+    \n",
                 new ClassDiag(
-                        Arrays.asList("Hello", "my", "nice", "World"),
+                        classes("Hello", "my", "nice", "World"),
                         Arrays.asList(
                                 new Association("Hello", "my"),
                                 new Association("Hello", "nice"),
@@ -153,7 +158,7 @@ public class ClassDiagTest {
                         "    |                   |                           \n" +
                         "    +-------------------+                           \n",
                 new ClassDiag(
-                        Arrays.asList("Hello", "my", "very", "nice", "World"),
+                        classes("Hello", "my", "very", "nice", "World"),
                         Arrays.asList(
                                 new Association("Hello", "my"),
                                 new Association("Hello", "World"),
@@ -175,7 +180,7 @@ public class ClassDiagTest {
                         "              |                                |                \n" +
                         "              +--------------------------------+                \n",
                 new ClassDiag(
-                        Arrays.asList("Hello", "my", "very", "super", "nice", "World"),
+                        classes("Hello", "my", "very", "super", "nice", "World"),
                         Arrays.asList(
                                 new Association("Hello", "my"),
                                 new Association("Hello", "very"),
@@ -201,7 +206,7 @@ public class ClassDiagTest {
                         "    |                      |                     \n" +
                         "    +----------------------+                     \n",
                 new ClassDiag(
-                        Arrays.asList("Hello", "nice", "World", "!", ":)"),
+                        classes("Hello", "nice", "World", "!", ":)"),
                         Arrays.asList(
                                 new Association("Hello", "!"),
                                 new Association("Hello", "World"),
@@ -222,7 +227,7 @@ public class ClassDiagTest {
                         "  |               |  \n" +
                         "  +---------------+  \n",
                 new ClassDiag(
-                        Arrays.asList("A", "B", "C"),
+                        classes("A", "B", "C"),
                         Arrays.asList(
                                 new Association("A", "C"),
                                 new Association("A", "C"))
@@ -240,11 +245,54 @@ public class ClassDiagTest {
                         "  |       |  \n" +
                         "  +-------+  \n",
                 new ClassDiag(
-                        Arrays.asList("A", "B"),
+                        classes("A", "B"),
                         Arrays.asList(
                                 new Association("A", "B"),
                                 new Association("A", "B"),
                                 new Association("A", "B"))
                 ).asText());
+    }
+
+    @Test
+    public void differentHeightOfClasses() {
+        MultivaluedMap<String, String> rawForm = new MultivaluedHashMap<>();
+        rawForm.putSingle("className0", "Test");
+        rawForm.putSingle("attributes0", "hello");
+        rawForm.putSingle("operations0", "foo()");
+        rawForm.putSingle("className1", "Hello");
+        rawForm.putSingle("attributes1", "");
+        rawForm.putSingle("operations1", "");
+        rawForm.putSingle("className2", "World");
+        rawForm.putSingle("attributes2", "");
+        rawForm.putSingle("operations2", "do()");
+
+        assertEquals("" +
+                        "    +-----------------------+    \n" +
+                        "    |                       |    \n" +
+                        "+-------+   +-------+   +-------+\n" +
+                        "| Test  |---| Hello |---| World |\n" +
+                        "|.......|   +-------+   |.......|\n" +
+                        "| hello |               | do()  |\n" +
+                        "|.......|               +-------+\n" +
+                        "| foo() |                   |    \n" +
+                        "+-------+                   |    \n" +
+                        "    |                       |    \n" +
+                        "    +-----------------------+    \n",
+                new ClassDiag(
+                        IntStream.range(0, 3).mapToObj(i -> new UmlClass(rawForm, i)).collect(Collectors.toList()),
+                        Arrays.asList(
+                                new Association("Test", "Hello"),
+                                new Association("Hello", "World"),
+                                new Association("Test", "World"),
+                                new Association("Test", "World"))
+                ).asText());
+    }
+
+    private List<UmlClass> classes(String... classNames) {
+        return Arrays.stream(classNames).map(x -> {
+            MultivaluedMap<String, String> rawForm = new MultivaluedHashMap<>();
+            rawForm.putSingle("className0", x);
+            return new UmlClass(rawForm, 0);
+        }).collect(Collectors.toList());
     }
 }
