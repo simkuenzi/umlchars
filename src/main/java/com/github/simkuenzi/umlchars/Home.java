@@ -1,17 +1,14 @@
 package com.github.simkuenzi.umlchars;
 
-import com.github.simkuenzi.restforms.FormField;
 import org.thymeleaf.TemplateEngine;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Path("")
 public class Home extends Controller {
@@ -21,7 +18,7 @@ public class Home extends Controller {
 
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public String get() throws Exception {
+    public Response get() throws Exception {
         Map<String, Object> vars = new HashMap<>();
         vars.put("form", new UmlForm().noValidation());
         return render("home", vars);
@@ -41,6 +38,6 @@ public class Home extends Controller {
                     .asText()
             );
         }
-        return Response.ok(render("home", vars), MediaType.TEXT_HTML).build();
+        return render("home", vars);
     }
 }
