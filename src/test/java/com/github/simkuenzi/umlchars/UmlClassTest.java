@@ -73,7 +73,7 @@ public class UmlClassTest {
 
     private String stampClass(MultivaluedMap<String, String> rawForm) {
         StampRow stampRow = new StampRow(Collections.emptyList(), 0);
-        stampRow = new UmlClass(rawForm, 0).addToRow(stampRow);
+        stampRow = new UmlClass(rawForm, 0).addToRow(stampRow, false, 0);
         StringWriter writer = new StringWriter();
         PrintWriter out = new PrintWriter(writer);
         stampRow.stamp(out);

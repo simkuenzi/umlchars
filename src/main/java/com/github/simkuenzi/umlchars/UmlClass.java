@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import static org.thymeleaf.util.StringUtils.repeat;
 
-public class UmlClass implements CharStamp {
+public class UmlClass {
 
     private MultivaluedMap<String, String> rawForm;
     private int index;
@@ -33,45 +33,50 @@ public class UmlClass implements CharStamp {
         return new Field<>(new TextField(new FormValue("operations" + index, rawForm)));
     }
 
-    @Override
-    public void stamp(PrintWriter out, int lineIndex) {
-        if (lineIndex == 0 || lineIndex == height() - 1) {
-            out.write('+');
-            out.write(repeat('-', width() - 2));
-            out.write('+');
-        } else if (lineIndex == 1) {
-            out.write("| ");
-            out.write(getClassName().getValue());
-            out.write(repeat(' ', width() - 4 - getClassName().getValue().length()));
-            out.write(" |");
-        } else if (lineIndex == 2 && attributesHeight() > 0 || lineIndex == attributesHeight() + 2 && operationsHeight() > 0) {
-            out.write('|');
-            out.write(repeat('.', width() - 2));
-            out.write('|');
-        } else if (lineIndex > 2 && lineIndex < attributesHeight() + 2) {
-            out.write("| ");
-            String attributeLine = attributeLines().collect(Collectors.toList()).get(lineIndex - 3);
-            out.write(attributeLine);
-            out.write(repeat(' ', width() - 4 - attributeLine.length()));
-            out.write(" |");
-        } else if (lineIndex > 2 + attributesHeight() && lineIndex < height()) {
-            out.write("| ");
-            String operationLine = operationLines().collect(Collectors.toList()).get(lineIndex - (3 + attributesHeight()));
-            out.write(operationLine);
-            out.write(repeat(' ', width() - 4 - operationLine.length()));
-            out.write(" |");
-        } else {
-            out.write(repeat(' ', width()));
-        }
-    }
+    public StampRow addToRow(StampRow row, boolean connectToBottom, int fullHeight) {
+        return row.combine(new CharStamp() {
+            @Override
+            public void stamp(PrintWriter out, int lineIndex) {
+                if (lineIndex == 0 || lineIndex == height() - 1) {
+                    out.write('+');
+                    out.write(repeat('-', width() - 2));
+                    out.write('+');
+                } else if (lineIndex == 1) {
+                    out.write("| ");
+                    out.write(getClassName().getValue());
+                    out.write(repeat(' ', width() - 4 - getClassName().getValue().length()));
+                    out.write(" |");
+                } else if (lineIndex == 2 && attributesHeight() > 0 || lineIndex == attributesHeight() + 2 && operationsHeight() > 0) {
+                    out.write('|');
+                    out.write(repeat('.', width() - 2));
+                    out.write('|');
+                } else if (lineIndex > 2 && lineIndex < attributesHeight() + 2) {
+                    out.write("| ");
+                    String attributeLine = attributeLines().collect(Collectors.toList()).get(lineIndex - 3);
+                    out.write(attributeLine);
+                    out.write(repeat(' ', width() - 4 - attributeLine.length()));
+                    out.write(" |");
+                } else if (lineIndex > 2 + attributesHeight() && lineIndex < height()) {
+                    out.write("| ");
+                    String operationLine = operationLines().collect(Collectors.toList()).get(lineIndex - (3 + attributesHeight()));
+                    out.write(operationLine);
+                    out.write(repeat(' ', width() - 4 - operationLine.length()));
+                    out.write(" |");
+                } else if (connectToBottom && lineIndex >= height() && lineIndex < fullHeight) {
+                    int startX = (width() - 1) / 2;
+                    out.print(repeat(' ', startX));
+                    out.print("|");
+                    out.print(repeat(' ', width() - startX - 1));
+                } else {
+                    out.write(repeat(' ', width()));
+                }
+            }
 
-    @Override
-    public void stampSeparator(PrintWriter out, int lineIndex) {
+            @Override
+            public void stampSeparator(PrintWriter out, int lineIndex) {
 
-    }
-
-    public StampRow addToRow(StampRow row) {
-        return row.combine(this, height());
+            }
+        }, height());
     }
 
     public CharStamp topBegin() {
@@ -94,7 +99,7 @@ public class UmlClass implements CharStamp {
         return new Empty(width());
     }
 
-    private int height() {
+    int height() {
         return 3 + attributesHeight() + operationsHeight();
     }
 

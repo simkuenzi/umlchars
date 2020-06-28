@@ -30,7 +30,11 @@ class ClassDiag {
 
         StampRow stampRow = new StampRow(Collections.emptyList(), 0);
         for (int i = 0; i < classes.size(); i++) {
-            stampRow = classes.get(i).addToRow(stampRow);
+            final int classIndex = i;
+            stampRow = classes.get(i).addToRow(
+                    stampRow,
+                    bottomAssocs().anyMatch(a -> a.isToHere(classIndex, classNames()) || a.isFromHere(classIndex, classNames())),
+                    classes.stream().mapToInt(UmlClass::height).max().orElse(0));
             if (i < classes.size() - 1) {
                 if (assocCenter(i).isPresent()) {
                     stampRow = stampRow.combine(new Horizontal(), 2);

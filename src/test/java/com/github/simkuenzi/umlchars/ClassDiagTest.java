@@ -288,6 +288,47 @@ public class ClassDiagTest {
                 ).asText());
     }
 
+    @Test
+    public void connectToBotton() {
+        MultivaluedMap<String, String> rawForm = new MultivaluedHashMap<>();
+        rawForm.putSingle("className0", "Test");
+        rawForm.putSingle("attributes0", "hello");
+        rawForm.putSingle("operations0", "foo()");
+        rawForm.putSingle("className1", "Hello");
+        rawForm.putSingle("attributes1", "");
+        rawForm.putSingle("operations1", "");
+        rawForm.putSingle("className2", "World");
+        rawForm.putSingle("attributes2", "");
+        rawForm.putSingle("operations2", "do()");
+
+        assertEquals("" +
+                        "    +-----------------------+    \n" +
+                        "    |                       |    \n" +
+                        "    |           +-----------+    \n" +
+                        "    |           |           |    \n" +
+                        "+-------+   +-------+   +-------+\n" +
+                        "| Test  |---| Hello |---| World |\n" +
+                        "|.......|   +-------+   |.......|\n" +
+                        "| hello |       |       | do()  |\n" +
+                        "|.......|       |       +-------+\n" +
+                        "| foo() |       |           |    \n" +
+                        "+-------+       |           |    \n" +
+                        "    |           |           |    \n" +
+                        "    |           +-----------+    \n" +
+                        "    |                       |    \n" +
+                        "    +-----------------------+    \n",
+                new ClassDiag(
+                        IntStream.range(0, 3).mapToObj(i -> new UmlClass(rawForm, i)).collect(Collectors.toList()),
+                        Arrays.asList(
+                                new Association("Test", "Hello"),
+                                new Association("Hello", "World"),
+                                new Association("Test", "World"),
+                                new Association("Test", "World"),
+                                new Association("Hello", "World"),
+                                new Association("Hello", "World"))
+                ).asText());
+    }
+
     private List<UmlClass> classes(String... classNames) {
         return Arrays.stream(classNames).map(x -> {
             MultivaluedMap<String, String> rawForm = new MultivaluedHashMap<>();
