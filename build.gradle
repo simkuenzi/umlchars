@@ -52,7 +52,7 @@ remotes {
     webServer {
         host = System.properties['deployServer']
         user = System.properties['deployUser']
-        identity = file(System.properties['deployIdentity'])
+        identity = file(System.properties['deployIdentity'] ?: 'id_rsa')
     }
 }
 
