@@ -62,8 +62,8 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/simkuenzi/umlchars")
             credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("GIT_USER")
-                password = project.findProperty("gpr.key") ?: System.getenv("GIT_TOKEN")
+                username = System.getenv("GIT_USER")
+                password = System.getenv("GIT_TOKEN")
             }
         }
     }
