@@ -32,11 +32,7 @@ public class Home extends Controller {
         Map<String, Object> vars = new HashMap<>();
         vars.put("form", form);
         if (form.valid()) {
-            vars.put("uml", new ClassDiag(
-                    form.getClasses(),
-                    form.getAssocs().stream().map(x -> new Association(x.getAssocFrom().getValue(), x.getAssocTo().getValue())).collect(Collectors.toList()))
-                    .asText()
-            );
+            vars.put("uml", new ClassDiag(form).asText());
         }
         return render("home", vars);
     }

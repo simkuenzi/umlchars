@@ -37,9 +37,9 @@ public class UmlForm {
         return IntStream.range(0, fieldCount).mapToObj(i -> new UmlClass(rawForm, i)).collect(Collectors.toList());
     }
 
-    public List<AssocForm> getAssocs() {
+    public List<UmlAssociation> getAssocs() {
         int fieldCount = (int) rawForm.keySet().stream().filter(x -> ASSOC_FROM_FIELD_PATTERN.matcher(x).matches()).count();
-        return IntStream.range(0, fieldCount).mapToObj(i -> new AssocForm(rawForm, i)).collect(Collectors.toList());
+        return IntStream.range(0, fieldCount).mapToObj(i -> new UmlAssociation(rawForm, i)).collect(Collectors.toList());
     }
 
     public String getSelectedTab() {

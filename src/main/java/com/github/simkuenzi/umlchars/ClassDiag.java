@@ -13,12 +13,10 @@ import static org.thymeleaf.util.StringUtils.repeat;
 
 class ClassDiag {
 
-    private List<UmlClass> classes;
-    private Collection<Association> associations;
+    private UmlForm form;
 
-    ClassDiag(List<UmlClass> classes, Collection<Association> associations) {
-        this.classes = classes;
-        this.associations = associations;
+    public ClassDiag(UmlForm form) {
+        this.form = form;
     }
 
     String asText() {
@@ -29,13 +27,13 @@ class ClassDiag {
                 UmlClass::topEnd, (i, c) -> i);
 
         StampRow stampRow = new StampRow(Collections.emptyList(), 0);
-        for (int i = 0; i < classes.size(); i++) {
+        for (int i = 0; i < form.getClasses().size(); i++) {
             final int classIndex = i;
-            stampRow = classes.get(i).addToRow(
+            stampRow = form.getClasses().get(i).addToRow(
                     stampRow,
                     bottomAssocs().anyMatch(a -> a.isToHere(classIndex, classNames()) || a.isFromHere(classIndex, classNames())),
-                    classes.stream().mapToInt(UmlClass::height).max().orElse(0));
-            if (i < classes.size() - 1) {
+                    form.getClasses().stream().mapToInt(UmlClass::height).max().orElse(0));
+            if (i < form.getClasses().size() - 1) {
                 if (assocCenter(i).isPresent()) {
                     stampRow = stampRow.combine(new Horizontal(), 2);
                 } else {
@@ -63,22 +61,22 @@ class ClassDiag {
         return writer.toString();
     }
 
-    private void drawRectAssocs(PrintWriter out, List<Association> assocs, Function<UmlClass, CharStamp> begin,
+    private void drawRectAssocs(PrintWriter out, List<UmlAssociation> assocs, Function<UmlClass, CharStamp> begin,
                                 Function<UmlClass, CharStamp> middle, Function<UmlClass, CharStamp> end, RowOrder order) {
         if (assocs.size() > 0) {
             List<StampRow> rows = new ArrayList<>();
-            List<Association> drawnAssocs = new ArrayList<>();
+            List<UmlAssociation> drawnAssocs = new ArrayList<>();
 
             while (drawnAssocs.size() != assocs.size()) {
                 List<CharStamp> stamps = new ArrayList<>();
                 boolean assocOpen = false;
-                List<Association> drawnHereAssocs = new ArrayList<>();
-                for (int i = 0; i < classes.size(); i++) {
+                List<UmlAssociation> drawnHereAssocs = new ArrayList<>();
+                for (int i = 0; i < form.getClasses().size(); i++) {
                     final int here = i;
-                    UmlClass umlClass = classes.get(i);
+                    UmlClass umlClass = form.getClasses().get(i);
                     List<CharStamp> composite = new ArrayList<>();
 
-                    for (Association a : assocs.stream().filter(x -> x.isFromHere(here, classNames())).collect(Collectors.toList())) {
+                    for (UmlAssociation a : assocs.stream().filter(x -> x.isFromHere(here, classNames())).collect(Collectors.toList())) {
                         if (drawnAssocs.contains(a)) {
                             composite.add(umlClass.vertical());
                         } else if (!assocOpen) {
@@ -89,7 +87,7 @@ class ClassDiag {
                         }
                     }
 
-                    for (Association a : assocs.stream().filter(x -> x.isToHere(here, classNames())).collect(Collectors.toList())) {
+                    for (UmlAssociation a : assocs.stream().filter(x -> x.isToHere(here, classNames())).collect(Collectors.toList())) {
                         if(drawnHereAssocs.contains(a)) {
                             composite.add(end.apply(umlClass));
                             assocOpen = false;
@@ -98,7 +96,7 @@ class ClassDiag {
                         }
                     }
 
-                    for (Association a : assocs.stream().filter(x -> x.isThroughHere(here, classNames())).filter(drawnHereAssocs::contains).collect(Collectors.toList())) {
+                    for (UmlAssociation a : assocs.stream().filter(x -> x.isThroughHere(here, classNames())).filter(drawnHereAssocs::contains).collect(Collectors.toList())) {
                         composite.add(middle.apply(umlClass));
                     }
                     composite.add(umlClass.empty());
@@ -112,40 +110,35 @@ class ClassDiag {
         }
     }
 
-    private Optional<Association> assocCenter(int here) {
+    private Optional<UmlAssociation> assocCenter(int here) {
         return assocsHereToNext(here).findFirst();
     }
 
-    private Stream<Association> assocsHereToNext(int here) {
-        return normalizedAssociations().filter(a -> a.startsFrom(here, classNames())).filter(a -> !a.isFar(classNames()));
+    private Stream<UmlAssociation> assocsHereToNext(int here) {
+        return form.getAssocs().stream().filter(a -> a.startsFrom(here, classNames())).filter(a -> !a.isFar(classNames()));
     }
 
-    private Stream<Association> normalizedAssociations() {
-        return associations.stream().map(a -> a.normalized(classNames()));
+    private Stream<UmlAssociation> centerAssocs() {
+        return IntStream.range(0, form.getClasses().size()).mapToObj(this::assocCenter).filter(Optional::isPresent).map(Optional::get);
     }
 
-
-    private Stream<Association> centerAssocs() {
-        return IntStream.range(0, classes.size()).mapToObj(this::assocCenter).filter(Optional::isPresent).map(Optional::get);
+    private Stream<UmlAssociation> rectAssocs() {
+        List<UmlAssociation> center = centerAssocs().collect(Collectors.toList());
+        return form.getAssocs().stream().filter(a -> !center.contains(a)).sorted(Comparator.comparing(a -> a.sortOrder(classNames())));
     }
 
-    private Stream<Association> rectAssocs() {
-        List<Association> center = centerAssocs().collect(Collectors.toList());
-        return normalizedAssociations().filter(a -> !center.contains(a)).sorted(Comparator.comparing(a -> a.sortOrder(classNames())));
-    }
-
-    private Stream<Association> bottomAssocs() {
-        List<Association> rect = rectAssocs().collect(Collectors.toList());
+    private Stream<UmlAssociation> bottomAssocs() {
+        List<UmlAssociation> rect = rectAssocs().collect(Collectors.toList());
         return IntStream.range(0, rect.size()).filter(i -> (i+1) % 2 == 0).mapToObj(rect::get);
     }
 
-    private Stream<Association> topAssocs() {
-        List<Association> rect = rectAssocs().collect(Collectors.toList());
+    private Stream<UmlAssociation> topAssocs() {
+        List<UmlAssociation> rect = rectAssocs().collect(Collectors.toList());
         return IntStream.range(0, rect.size()).filter(i -> (i+1) % 2 == 1).mapToObj(rect::get);
     }
 
     private List<String> classNames() {
-        return classes.stream().map(x -> x.getClassName().getValue()).collect(Collectors.toList());
+        return form.getClasses().stream().map(x -> x.getClassName().getValue()).collect(Collectors.toList());
     }
 
     private interface RowOrder {
