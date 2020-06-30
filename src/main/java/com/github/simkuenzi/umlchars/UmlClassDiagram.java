@@ -27,11 +27,12 @@ class UmlClassDiagram {
         form.getClasses().forEach(c -> shapes.add(c.renderShape()));
         centerAssocs().forEach(a -> shapes.add(a.renderShape()));
         topAssocs().sorted(Comparator.comparing(UmlAssociation::heightAtFrom).reversed()).forEach(a -> shapes.add(a.renderShape()));
-        bottomAssocs().sorted(Comparator.comparing(UmlAssociation::bottomY).reversed()).forEach(a -> shapes.add(a.renderShape()));
+        bottomAssocs().sorted(Comparator.comparing(UmlAssociation::bottom).reversed()).forEach(a -> shapes.add(a.renderShape()));
 
         UmlClass last = form.getClasses().get(form.getClasses().size() - 1);
-        int width = last.x() + last.width();
-        int assocMaxBottomY = form.getAssocs().stream().mapToInt(UmlAssociation::bottomY).max().orElse(0);
+        int assocsLeft = bottomAssocs().mapToInt(UmlAssociation::left).max().orElse(0);
+        int width = Math.max(last.x() + last.width(), assocsLeft + 1);
+        int assocMaxBottomY = form.getAssocs().stream().mapToInt(UmlAssociation::bottom).max().orElse(0);
         int classMaxBottomY = form.getClasses().stream().mapToInt(c -> c.y() + c.height() - 1).max().orElse(0);
         int height = Math.max(assocMaxBottomY, classMaxBottomY) + 1;
 

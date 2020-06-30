@@ -424,4 +424,30 @@ public class UmlClassDiagramTest {
                         "    +-----------------------+    \n",
                 new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
+
+    @Test
+    public void multiplicityOnBorder() {
+        MultivaluedMap<String, String> rawForm = new MultivaluedHashMap<>();
+        rawForm.putSingle("className0", "A");
+        rawForm.putSingle("className1", "B");
+        rawForm.putSingle("assocFrom0", "A");
+        rawForm.putSingle("assocTo0", "B");
+        rawForm.putSingle("assocFrom1", "A");
+        rawForm.putSingle("assocTo1", "B");
+        rawForm.putSingle("assocFromMultiplicity1", "0..1");
+        rawForm.putSingle("assocToMultiplicity1", "0..1");
+        rawForm.putSingle("assocFrom2", "A");
+        rawForm.putSingle("assocTo2", "B");
+        rawForm.putSingle("assocFromMultiplicity2", "0..1");
+        rawForm.putSingle("assocToMultiplicity2", "0..1");
+        assertEquals("" +
+                        "    +-------+    \n" +
+                        "0..1|   0..1|    \n" +
+                        "  +---+   +---+  \n" +
+                        "  | A |---| B |  \n" +
+                        "  +---+   +---+  \n" +
+                        "    |0..1   |0..1\n" +
+                        "    +-------+    \n",
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
+    }
 }

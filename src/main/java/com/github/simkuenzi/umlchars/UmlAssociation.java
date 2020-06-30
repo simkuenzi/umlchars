@@ -55,7 +55,7 @@ public class UmlAssociation {
                 lines.add(bottomVerticalSegment(' ', "", lineFillerLength, '|', toMultWritten ? "" : normalizeToMultiplicity()));
                 toMultWritten = true;
             }
-            for (int i = Math.max(fromTopY, toTopY); i < bottomY(); i++) {
+            for (int i = Math.max(fromTopY, toTopY); i < bottom(); i++) {
                 lines.add(bottomVerticalSegment('|',  fromMultWritten ? "" : normalizeFromMultiplicity() , lineFillerLength, '|', toMultWritten ? "" : normalizeToMultiplicity()));
                 fromMultWritten = true;
                 toMultWritten = true;
@@ -162,7 +162,7 @@ public class UmlAssociation {
             UmlClass to = classes.get(positionOf(normalizeTo()));
             int maxBottomYBypass = new UmlClassDiagram(new HomeForm(rawForm)).bottomAssocs()
                     .filter(this::mustBypass)
-                    .mapToInt(UmlAssociation::bottomY)
+                    .mapToInt(UmlAssociation::bottom)
                     .max().orElse(0);
             int bottomYFrom = from.y() + from.height() - 1;
             int bottomYTop = to.y() + to.height() - 1;
@@ -170,7 +170,7 @@ public class UmlAssociation {
         }
     }
 
-    int bottomY() {
+    int bottom() {
         List<UmlClass> classes = new HomeForm(rawForm).getClasses();
         UmlClass umlClass = classes.get(positionOf(normalizeFrom()));
         if (isCenter()) {
@@ -182,12 +182,23 @@ public class UmlAssociation {
         }
     }
 
+    int left() {
+        List<UmlClass> classes = new HomeForm(rawForm).getClasses();
+        UmlClass umlClass = classes.get(positionOf(normalizeTo()));
+        return (umlClass.width() - 1) / 2 + normalizeToMultiplicity().length() + umlClass.x();
+    }
+
     int width() {
         if (isCenter()) {
             return  normalizeFromMultiplicity().length() + normalizeToMultiplicity().length() + 3;
         } else {
             throw new UnsupportedOperationException();
         }
+    }
+
+    int fromOverlap() {
+        List<UmlClass> classes = new HomeForm(rawForm).getClasses();
+        return Math.max(0, -((classes.get(positionOf(normalizeFrom())).width() - 1) / 2 - normalizeFromMultiplicity().length()));
     }
 
     private boolean mustBypass(UmlAssociation other) {

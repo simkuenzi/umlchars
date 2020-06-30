@@ -98,7 +98,11 @@ public class UmlClass {
         List<UmlClass> classes = new HomeForm(rawForm).getClasses();
 
         int i = classes.indexOf(this);
-        return i == 0 ? 0 : classes.get(i - 1).x() + classes.get(i - 1).width() + diagram.assocCenter(i - 1)
+        int overlap = diagram.topAssocs()
+                .filter(a -> a.getAssocFrom().getValue().equals(getClassName().getValue()))
+                .mapToInt(UmlAssociation::fromOverlap)
+                .max().orElse(0);
+        return i == 0 ? overlap : classes.get(i - 1).x() + classes.get(i - 1).width() + diagram.assocCenter(i - 1)
                 .map(UmlAssociation::width).orElse(3);
     }
 
