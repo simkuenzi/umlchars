@@ -6,7 +6,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.Context;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,7 +26,7 @@ public class Application extends javax.ws.rs.core.Application {
         TemplateEngine templateEngine = new TemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
 
-        return new HashSet<>(Arrays.asList(
+        return new HashSet<>(Collections.singletonList(
                 new Home(templateEngine)));
     }
 }

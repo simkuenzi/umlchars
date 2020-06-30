@@ -7,25 +7,25 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class UmlForm {
+public class HomeForm {
 
     private static final Pattern CLASS_NAME_FIELD_PATTERN = Pattern.compile("className(\\d+)");
     private static final Pattern ASSOC_FROM_FIELD_PATTERN = Pattern.compile("assocFrom(\\d+)");
 
-    private MultivaluedMap<String, String> rawForm;
+    private final MultivaluedMap<String, String> rawForm;
 
-    UmlForm() {
+    HomeForm() {
         this(new MultivaluedHashMap<>());
     }
 
-    UmlForm(MultivaluedMap<String, String> rawForm) {
+    HomeForm(MultivaluedMap<String, String> rawForm) {
         this.rawForm = rawForm;
     }
 
-    UmlForm noValidation() {
+    HomeForm noValidation() {
         MultivaluedMap<String, String> rawForm = new MultivaluedHashMap<>();
         rawForm.add("selectedTab", "classes-tab-btn");
-        return new UmlForm(rawForm);
+        return new HomeForm(rawForm);
     }
 
     public boolean valid() {
@@ -42,10 +42,12 @@ public class UmlForm {
         return IntStream.range(0, fieldCount).mapToObj(i -> new UmlAssociation(rawForm, i)).collect(Collectors.toList());
     }
 
+    @SuppressWarnings("unused")
     public String getSelectedTab() {
         return rawForm.getFirst("selectedTab");
     }
 
+    @SuppressWarnings("unused")
     public String message() {
         return valid() ? "" : "Invalid input";
     }

@@ -7,7 +7,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import static org.junit.Assert.assertEquals;
 
-public class ClassDiagTest {
+public class UmlClassDiagramTest {
 
     @Test
     public void helloToWorld() {
@@ -20,7 +20,7 @@ public class ClassDiagTest {
                         "+-------+   +-------+\n" +
                         "| Hello |---| World |\n" +
                         "+-------+   +-------+\n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
     @Test
@@ -36,7 +36,7 @@ public class ClassDiagTest {
                         "+-------+   +-------+   +-----+\n" +
                         "| Hello |---| World |   | UML |\n" +
                         "+-------+   +-------+   +-----+\n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class ClassDiagTest {
                         "+-------+   +-------+   +-----+\n" +
                         "| Hello |---| World |   | UML |\n" +
                         "+-------+   +-------+   +-----+\n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class ClassDiagTest {
                         "+-------+   +-------+   +-----+\n" +
                         "| Hello |---| World |   | UML |\n" +
                         "+-------+   +-------+   +-----+\n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class ClassDiagTest {
                         "+----+   +-------+   +------+\n" +
                         "| Hi |---| World |   | Cool |\n" +
                         "+----+   +-------+   +------+\n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
     @Test
@@ -111,7 +111,7 @@ public class ClassDiagTest {
                         "+-------+   +----+   +------+   +-------+\n" +
                         "| Hello |---| my |---| nice |   | World |\n" +
                         "+-------+   +----+   +------+   +-------+\n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
     @Test
@@ -137,7 +137,7 @@ public class ClassDiagTest {
                         "+-------+   +----+   +------+   +-------+\n" +
                         "              |                     |    \n" +
                         "              +---------------------+    \n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
     @Test
@@ -167,7 +167,7 @@ public class ClassDiagTest {
                         "+-------+   +----+   +------+   +-------+\n" +
                         "    |                               |    \n" +
                         "    +-------------------------------+    \n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
 
@@ -203,7 +203,7 @@ public class ClassDiagTest {
                         "    |         +--------------------------------+    \n" +
                         "    |                   |                           \n" +
                         "    +-------------------+                           \n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
     @Test
@@ -233,7 +233,7 @@ public class ClassDiagTest {
                         "+-------+   +----+   +------+   +-------+   +------+   +-------+\n" +
                         "              |                                |                \n" +
                         "              +--------------------------------+                \n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
 
@@ -256,9 +256,9 @@ public class ClassDiagTest {
         rawForm.putSingle("assocFrom4", "Hello");
         rawForm.putSingle("assocTo4", ":)");
         assertEquals("" +
-                        "    +--------------------------------+           \n" +
-                        "    |                                |           \n" +
                         "    +----------------------------------------+   \n" +
+                        "    |                                        |   \n" +
+                        "    +--------------------------------+       |   \n" +
                         "    |                                |       |   \n" +
                         "+-------+   +------+   +-------+   +---+   +----+\n" +
                         "| Hello |---| nice |   | World |   | ! |   | :) |\n" +
@@ -267,7 +267,7 @@ public class ClassDiagTest {
                         "    |          +---------------------+           \n" +
                         "    |                      |                     \n" +
                         "    +----------------------+                     \n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
     @Test
@@ -288,7 +288,7 @@ public class ClassDiagTest {
                         "+---+   +---+   +---+\n" +
                         "  |               |  \n" +
                         "  +---------------+  \n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
     @Test
@@ -310,7 +310,7 @@ public class ClassDiagTest {
                         "+---+   +---+\n" +
                         "  |       |  \n" +
                         "  +-------+  \n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
     @Test
@@ -345,7 +345,7 @@ public class ClassDiagTest {
                         "+-------+                   |    \n" +
                         "    |                       |    \n" +
                         "    +-----------------------+    \n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
     @Test
@@ -383,11 +383,9 @@ public class ClassDiagTest {
                         "| hello |       |       | do()  |\n" +
                         "|.......|       |       +-------+\n" +
                         "| foo() |       |           |    \n" +
-                        "+-------+       |           |    \n" +
-                        "    |           |           |    \n" +
-                        "    |           +-----------+    \n" +
+                        "+-------+       +-----------+    \n" +
                         "    |                       |    \n" +
                         "    +-----------------------+    \n",
-                new ClassDiag(new UmlForm(rawForm)).asText());
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 }

@@ -17,6 +17,7 @@ public class Field<T> {
         return field.valid();
     }
 
+    @SuppressWarnings("unused")
     public String getMessage() {
         return field.message();
     }

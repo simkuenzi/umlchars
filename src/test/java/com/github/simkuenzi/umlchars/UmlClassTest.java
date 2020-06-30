@@ -6,7 +6,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collections;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -72,11 +72,16 @@ public class UmlClassTest {
     }
 
     private String stampClass(MultivaluedMap<String, String> rawForm) {
-        StampRow stampRow = new StampRow(Collections.emptyList(), 0);
-        stampRow = new UmlClass(rawForm, 0).addToRow(stampRow, false, 0);
+        UmlClass umlClass = new UmlClass(rawForm, 0);
         StringWriter writer = new StringWriter();
         PrintWriter out = new PrintWriter(writer);
-        stampRow.stamp(out);
+        Shape shape = umlClass.renderShape();
+        IntStream.range(0, umlClass.height()).forEach(y -> {
+            IntStream.range(0, umlClass.width()).forEach(x ->
+                out.print(shape.charAt(x, y))
+            );
+            out.println();
+        });
         out.flush();
         return writer.toString();
     }

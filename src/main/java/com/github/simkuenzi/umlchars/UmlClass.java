@@ -5,22 +5,38 @@ import com.github.simkuenzi.restforms.MandatoryField;
 import com.github.simkuenzi.restforms.TextField;
 
 import javax.ws.rs.core.MultivaluedMap;
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.thymeleaf.util.StringUtils.repeat;
 
 public class UmlClass {
 
-    private MultivaluedMap<String, String> rawForm;
-    private int index;
+    private final MultivaluedMap<String, String> rawForm;
+    private final int index;
 
     public UmlClass(MultivaluedMap<String, String> rawForm, int index) {
         this.rawForm = rawForm;
         this.index = index;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UmlClass umlClass = (UmlClass) o;
+        return index == umlClass.index &&
+                Objects.equals(rawForm, umlClass.rawForm);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rawForm, index);
+    }
+
     public Field<String> getClassName() {
         return new Field<>(new MandatoryField(new TextField(new FormValue("className" + index, rawForm)), "Provide some text here"));
     }
@@ -33,70 +49,20 @@ public class UmlClass {
         return new Field<>(new TextField(new FormValue("operations" + index, rawForm)));
     }
 
-    public StampRow addToRow(StampRow row, boolean connectToBottom, int fullHeight) {
-        return row.combine(new CharStamp() {
-            @Override
-            public void stamp(PrintWriter out, int lineIndex) {
-                if (lineIndex == 0 || lineIndex == height() - 1) {
-                    out.write('+');
-                    out.write(repeat('-', width() - 2));
-                    out.write('+');
-                } else if (lineIndex == 1) {
-                    out.write("| ");
-                    out.write(getClassName().getValue());
-                    out.write(repeat(' ', width() - 4 - getClassName().getValue().length()));
-                    out.write(" |");
-                } else if (lineIndex == 2 && attributesHeight() > 0 || lineIndex == attributesHeight() + 2 && operationsHeight() > 0) {
-                    out.write('|');
-                    out.write(repeat('.', width() - 2));
-                    out.write('|');
-                } else if (lineIndex > 2 && lineIndex < attributesHeight() + 2) {
-                    out.write("| ");
-                    String attributeLine = attributeLines().collect(Collectors.toList()).get(lineIndex - 3);
-                    out.write(attributeLine);
-                    out.write(repeat(' ', width() - 4 - attributeLine.length()));
-                    out.write(" |");
-                } else if (lineIndex > 2 + attributesHeight() && lineIndex < height()) {
-                    out.write("| ");
-                    String operationLine = operationLines().collect(Collectors.toList()).get(lineIndex - (3 + attributesHeight()));
-                    out.write(operationLine);
-                    out.write(repeat(' ', width() - 4 - operationLine.length()));
-                    out.write(" |");
-                } else if (connectToBottom && lineIndex >= height() && lineIndex < fullHeight) {
-                    int startX = (width() - 1) / 2;
-                    out.print(repeat(' ', startX));
-                    out.print("|");
-                    out.print(repeat(' ', width() - startX - 1));
-                } else {
-                    out.write(repeat(' ', width()));
-                }
-            }
-
-            @Override
-            public void stampSeparator(PrintWriter out, int lineIndex) {
-
-            }
-        }, height());
-    }
-
-    public CharStamp topBegin() {
-        return new TopBegin(width());
-    }
-
-    public CharStamp topMiddle() {
-        return new TopMiddle(width());
-    }
-
-    public CharStamp topEnd() {
-        return new TopEnd(width());
-    }
-
-    public CharStamp vertical() {
-        return new Vertical(width());
-    }
-
-    public CharStamp empty() {
-        return new Empty(width());
+    public Shape renderShape() {
+        List<String> lines = new ArrayList<>();
+        lines.add('+' + repeat('-', width() - 2) + '+');
+        lines.add("| " + getClassName().getValue() + repeat(' ', width() - 4 - getClassName().getValue().length()) + " |");
+        if (attributeLines().count() > 0) {
+            lines.add('|' + repeat('.', width() - 2) + '|');
+            attributeLines().forEach(al -> lines.add("| " + al + repeat(' ', width() - 4 - al.length()) + " |"));
+        }
+        if (operationLines().count() > 0) {
+            lines.add('|' + repeat('.', width() - 2) + '|');
+            operationLines().forEach(ol -> lines.add("| " + ol + repeat(' ', width() - 4 - ol.length()) + " |"));
+        }
+        lines.add('+' + repeat('-', width() - 2) + '+');
+        return new Shape(x(), y(), lines.toArray(new String[0]));
     }
 
     int height() {
@@ -111,7 +77,7 @@ public class UmlClass {
         return attributeLines().count() > 0 ? (int) (attributeLines().count() + 1) : 0;
     }
 
-    private int width() {
+    int width() {
         return Stream.concat(
             Stream.of(getClassName().getValue()),
             Stream.concat(
@@ -127,5 +93,15 @@ public class UmlClass {
 
     private Stream<String> operationLines() {
         return getOperations().getValue().isEmpty() ? Stream.empty() : Arrays.stream(getOperations().getValue().split("\\r?\\n"));
+    }
+
+    int x() {
+        List<UmlClass> classes = new HomeForm(rawForm).getClasses();
+        int i = classes.indexOf(this);
+        return i == 0 ? 0 : classes.get(i - 1).x() + classes.get(i - 1).width() + 3;
+    }
+
+    int y() {
+        return new UmlClassDiagram(new HomeForm(rawForm)).topAssocs().mapToInt(UmlAssociation::heightAtFrom).max().orElse(0);
     }
 }
