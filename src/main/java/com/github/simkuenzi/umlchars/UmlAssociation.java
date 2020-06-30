@@ -36,25 +36,37 @@ public class UmlAssociation {
             return new Shape(from.x() + from.width(), from.y(), lines.toArray(new String[0]));
         } else if (isTop()) {
             List<String> lines = new ArrayList<>();
-            lines.add("+" + repeat('-', lineFillerLength) + "+");
-            IntStream.range(1, heightAtFrom()).forEach(i -> lines.add("|" + repeat(' ', lineFillerLength) + '|'));
-            return new Shape(x, from.y() - heightAtFrom(), lines.toArray(new String[0]));
+            String prefix = repeat(' ', normalizeFromMultiplicity().length());
+            lines.add(prefix + "+" + repeat('-', lineFillerLength) + "+");
+            IntStream.range(1, heightAtFrom() - 1).forEach(i -> lines.add(prefix + "|" + repeat(' ', lineFillerLength) + '|'));
+            lines.add(normalizeFromMultiplicity() + "|" + repeat(' ', lineFillerLength - normalizeToMultiplicity().length()) + normalizeToMultiplicity() + "|");
+            return new Shape(x - normalizeFromMultiplicity().length(), from.y() - heightAtFrom(), lines.toArray(new String[0]));
         } else {
             List<String> lines = new ArrayList<>();
             int fromTopY = from.y() + from.height();
             int toTopY = to.y() + to.height();
+            boolean fromMultWritten = false;
+            boolean toMultWritten = false;
             for (int i = fromTopY; i < toTopY; i++) {
-                lines.add("|");
+                lines.add(bottomVerticalSegment('|', fromMultWritten ? "" : normalizeFromMultiplicity(), lineFillerLength, ' ', ""));
+                fromMultWritten = true;
             }
             for (int i = toTopY; i < fromTopY; i++) {
-                lines.add(repeat(' ', lineFillerLength + 1) + '|');
+                lines.add(bottomVerticalSegment(' ', "", lineFillerLength, '|', toMultWritten ? "" : normalizeToMultiplicity()));
+                toMultWritten = true;
             }
             for (int i = Math.max(fromTopY, toTopY); i < bottomY(); i++) {
-                lines.add('|' + repeat(' ', lineFillerLength) + '|');
+                lines.add(bottomVerticalSegment('|',  fromMultWritten ? "" : normalizeFromMultiplicity() , lineFillerLength, '|', toMultWritten ? "" : normalizeToMultiplicity()));
+                fromMultWritten = true;
+                toMultWritten = true;
             }
             lines.add('+' + repeat('-', lineFillerLength) + '+');
             return new Shape(x, Math.min(fromTopY, toTopY), lines.toArray(new String[0]));
         }
+    }
+
+    private String bottomVerticalSegment(char left, String leftLabel, int fillerLength, char right, String rightLabel) {
+        return left + leftLabel + repeat(' ', fillerLength - leftLabel.length())  + right + rightLabel;
     }
 
     @Override
