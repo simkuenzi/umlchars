@@ -71,8 +71,16 @@ public class UmlAssociation {
         return new Field<>(new TextField(new FormValue("assocFrom" + index, rawForm)));
     }
 
+    public Field<String> getAssocFromMultiplicity() {
+        return new Field<>(new TextField(new FormValue("assocFromMultiplicity" + index, rawForm)));
+    }
+
     public Field<String> getAssocTo() {
         return new Field<>(new TextField(new FormValue("assocTo" + index, rawForm)));
+    }
+
+    public Field<String> getAssocToMultiplicity() {
+        return new Field<>(new TextField(new FormValue("assocToMultiplicity" + index, rawForm)));
     }
 
     boolean startsFrom(int here, List<String> classNames) {

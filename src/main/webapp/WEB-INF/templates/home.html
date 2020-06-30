@@ -37,11 +37,9 @@
     </form>
 
     <div>
-        <pre th:text="${uml}">
-            +-------+   +-------+
-            | Hello |---| World |
-            +-------+   +-------+
-        </pre>
+        <pre th:text="${uml}">+-------+   +-------+
+| Hello |---| World |
++-------+   +-------+</pre>
     </div>
 
     <div hidden id="classTemplate">
@@ -88,10 +86,46 @@
             </div>
         </div>
         <div class="form-row">
+            <div class="form-label">
+                <label for="assocFromMultiplicity">Multiplicity (From)</label>
+            </div>
+            <div>
+                <div>
+                    <button onclick="fillMultiplicity(this, '0..1')" type="button">0..1</button>
+                    <button onclick="fillMultiplicity(this, '1')" type="button">1</button>
+                    <button onclick="fillMultiplicity(this, '*')" type="button">*</button>
+                    <button onclick="fillMultiplicity(this, '1..*')" type="button">1..*</button>
+                </div>
+                <div class="form-input">
+                    <input id="assocFromMultiplicity" name="assocFromMultiplicity" type="text" />
+                    <div class="form-input-message">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
             <div class="form-label"><label for="assocTo">To</label></div>
             <div class="form-input">
                 <select id="assocTo" name="assocTo" class="class-ref"></select>
                 <div class="form-input-message">
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-label">
+                <label for="assocToMultiplicity">Multiplicity (To)</label>
+            </div>
+            <div>
+                <div>
+                    <button onclick="fillMultiplicity(this, '0..1')" type="button">0..1</button>
+                    <button onclick="fillMultiplicity(this, '1')" type="button">1</button>
+                    <button onclick="fillMultiplicity(this, '*')" type="button">*</button>
+                    <button onclick="fillMultiplicity(this, '1..*')" type="button">1..*</button>
+                </div>
+                <div class="form-input">
+                    <input id="assocToMultiplicity" name="assocToMultiplicity" type="text" />
+                    <div class="form-input-message">
+                    </div>
                 </div>
             </div>
         </div>
@@ -122,10 +156,18 @@
         var assocsEditor = new ListEditor("assocTemplate", "associations",
             function(e, node, o) {
                 e.initField(node.children.item(1).children.item(1), o.assocFrom);
-                e.initField(node.children.item(2).children.item(1), o.assocTo);
+                e.initField(node.children.item(2).children.item(1).children.item(1), o.assocFromMultiplicity);
+                e.initField(node.children.item(3).children.item(1), o.assocTo);
+                e.initField(node.children.item(4).children.item(1).children.item(1), o.assocToMultiplicity);
+
             },
             function() {
-                return { "assocFrom": {value: "", "valid": true, "message": "" }, "assocTo": {value: "", "valid": true, "message": "" }};
+                return {
+                        "assocFrom": {value: "", "valid": true, "message": "" },
+                        "assocTo": {value: "", "valid": true, "message": "" },
+                        "assocFromMultiplicity": {value: "", "valid": true, "message": "" },
+                        "assocToMultiplicity": {value: "", "valid": true, "message": "" }
+                    };
             }
         );
         assocsEditor.onAdd = updateClassSelect;
@@ -144,6 +186,10 @@
             }
             b.setAttribute("class", "tab-button-active");
             document.getElementById("selectedTab").value = b.id;
+        }
+
+        function fillMultiplicity(b, value) {
+            b.parentElement.parentElement.children.item(1).children.item(0).value = value;
         }
 
         function updateClassSelect() {
