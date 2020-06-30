@@ -5,10 +5,8 @@ import com.github.simkuenzi.restforms.MandatoryField;
 import com.github.simkuenzi.restforms.TextField;
 
 import javax.ws.rs.core.MultivaluedMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.thymeleaf.util.StringUtils.repeat;
@@ -96,9 +94,12 @@ public class UmlClass {
     }
 
     int x() {
+        UmlClassDiagram diagram = new UmlClassDiagram(new HomeForm(rawForm));
         List<UmlClass> classes = new HomeForm(rawForm).getClasses();
+
         int i = classes.indexOf(this);
-        return i == 0 ? 0 : classes.get(i - 1).x() + classes.get(i - 1).width() + 3;
+        return i == 0 ? 0 : classes.get(i - 1).x() + classes.get(i - 1).width() + diagram.assocCenter(i - 1)
+                .map(UmlAssociation::width).orElse(3);
     }
 
     int y() {

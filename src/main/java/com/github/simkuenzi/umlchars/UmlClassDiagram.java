@@ -64,7 +64,7 @@ class UmlClassDiagram {
         return IntStream.range(0, rect.size()).filter(i -> (i+1) % 2 == 0).mapToObj(rect::get);
     }
 
-    private Optional<UmlAssociation> assocCenter(int here) {
+    Optional<UmlAssociation> assocCenter(int here) {
         return assocsHereToNext(here).findFirst();
     }
 

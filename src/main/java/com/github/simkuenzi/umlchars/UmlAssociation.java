@@ -29,7 +29,11 @@ public class UmlAssociation {
         int lineFillerLength = to.x() - x + (to.width() - 1) / 2 - 1;
 
         if (isCenter()) {
-            return new Shape(from.x() + from.width(), from.y() + 1, "---");
+            List<String> lines = new ArrayList<>();
+            lines.add(" " + normalizeFromMultiplicity());
+            lines.add(repeat('-', width()));
+            lines.add(repeat(' ', normalizeFromMultiplicity().length() + 2) + normalizeToMultiplicity());
+            return new Shape(from.x() + from.width(), from.y(), lines.toArray(new String[0]));
         } else if (isTop()) {
             List<String> lines = new ArrayList<>();
             lines.add("+" + repeat('-', lineFillerLength) + "+");
@@ -103,6 +107,14 @@ public class UmlAssociation {
         return isNormalized() ? getAssocTo().getValue() : getAssocFrom().getValue();
     }
 
+    private String normalizeFromMultiplicity() {
+        return isNormalized() ? getAssocFromMultiplicity().getValue() : getAssocToMultiplicity().getValue();
+    }
+
+    private String normalizeToMultiplicity() {
+        return isNormalized() ? getAssocToMultiplicity().getValue() : getAssocFromMultiplicity().getValue();
+    }
+
     private boolean isNormalized() {
         return positionOf(getAssocFrom().getValue()) < positionOf(getAssocTo().getValue());
     }
@@ -155,6 +167,14 @@ public class UmlAssociation {
             return umlClass.y() - 1;
         } else {
             return umlClass.y() + umlClass.height() + heightAtFrom();
+        }
+    }
+
+    int width() {
+        if (isCenter()) {
+            return  normalizeFromMultiplicity().length() + normalizeToMultiplicity().length() + 3;
+        } else {
+            throw new UnsupportedOperationException();
         }
     }
 

@@ -170,6 +170,38 @@ public class UmlClassDiagramTest {
                 new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
 
+    @Test
+    public void manyAssocsTopMultiplicity() {
+        MultivaluedMap<String, String> rawForm = new MultivaluedHashMap<>();
+        rawForm.putSingle("className0", "Hello");
+        rawForm.putSingle("className1", "my");
+        rawForm.putSingle("className2", "nice");
+        rawForm.putSingle("className3", "World");
+        rawForm.putSingle("assocFrom0", "Hello");
+        rawForm.putSingle("assocTo0", "my");
+        rawForm.putSingle("assocFromMultiplicity0", "1");
+        rawForm.putSingle("assocToMultiplicity0", "1..*");
+        rawForm.putSingle("assocFrom1", "Hello");
+        rawForm.putSingle("assocTo1", "nice");
+        rawForm.putSingle("assocFrom2", "Hello");
+        rawForm.putSingle("assocTo2", "World");
+        rawForm.putSingle("assocFrom3", "my");
+        rawForm.putSingle("assocTo3", "nice");
+        rawForm.putSingle("assocFrom4", "my");
+        rawForm.putSingle("assocTo4", "World");
+        assertEquals("" +
+                        "    +------------------------+                \n" +
+                        "    |                        |                \n" +
+                        "    |              +---------------------+    \n" +
+                        "    |              |         |           |    \n" +
+                        "+-------+ 1      +----+   +------+   +-------+\n" +
+                        "| Hello |--------| my |---| nice |   | World |\n" +
+                        "+-------+   1..* +----+   +------+   +-------+\n" +
+                        "    |                                    |    \n" +
+                        "    +------------------------------------+    \n",
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
+    }
+
 
     @Test
     public void manyAssocs() {
