@@ -159,14 +159,15 @@ public class UmlAssociation {
         } else {
             List<UmlClass> classes = new HomeForm(rawForm).getClasses();
             UmlClass from = classes.get(positionOf(normalizeFrom()));
-            UmlClass to = classes.get(positionOf(normalizeTo()));
             int maxBottomYBypass = new UmlClassDiagram(new HomeForm(rawForm)).bottomAssocs()
                     .filter(this::mustBypass)
                     .mapToInt(UmlAssociation::bottom)
                     .max().orElse(0);
-            int bottomYFrom = from.y() + from.height() - 1;
-            int bottomYTop = to.y() + to.height() - 1;
-            return Math.max(Math.max(bottomYFrom, bottomYTop) , maxBottomYBypass) + 2 - from.y() - from.height();
+            int bottomClasses = IntStream.range(positionOf(normalizeFrom()), positionOf(normalizeTo()) + 1)
+                    .mapToObj(classes::get)
+                    .mapToInt(c -> c.y() + c.height() - 1)
+                    .max().orElse(0);
+            return Math.max(bottomClasses , maxBottomYBypass) + 2 - from.y() - from.height();
         }
     }
 

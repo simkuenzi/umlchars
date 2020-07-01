@@ -450,4 +450,30 @@ public class UmlClassDiagramTest {
                         "    +-------+    \n",
                 new UmlClassDiagram(new HomeForm(rawForm)).asText());
     }
+
+    @Test
+    public void bottomThroughLargeClass() {
+        MultivaluedMap<String, String> rawForm = new MultivaluedHashMap<>();
+        rawForm.putSingle("className0", "A");
+        rawForm.putSingle("className1", "B");
+        rawForm.putSingle("attributes1", "a\nb\nc");
+        rawForm.putSingle("className2", "C");
+        rawForm.putSingle("assocFrom0", "A");
+        rawForm.putSingle("assocTo0", "C");
+        rawForm.putSingle("assocFrom1", "A");
+        rawForm.putSingle("assocTo1", "C");
+        assertEquals("" +
+                        "  +---------------+  \n" +
+                        "  |               |  \n" +
+                        "+---+   +---+   +---+\n" +
+                        "| A |   | B |   | C |\n" +
+                        "+---+   |...|   +---+\n" +
+                        "  |     | a |     |  \n" +
+                        "  |     | b |     |  \n" +
+                        "  |     | c |     |  \n" +
+                        "  |     +---+     |  \n" +
+                        "  |               |  \n" +
+                        "  +---------------+  \n",
+                new UmlClassDiagram(new HomeForm(rawForm)).asText());
+    }
 }
