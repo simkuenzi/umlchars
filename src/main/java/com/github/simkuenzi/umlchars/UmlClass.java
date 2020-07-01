@@ -1,12 +1,14 @@
 package com.github.simkuenzi.umlchars;
 
-import com.github.simkuenzi.restforms.FormValue;
+import com.github.simkuenzi.restforms.FormField;
 import com.github.simkuenzi.restforms.MandatoryField;
 import com.github.simkuenzi.restforms.TextField;
 
 import javax.ws.rs.core.MultivaluedMap;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.thymeleaf.util.StringUtils.repeat;
@@ -35,16 +37,16 @@ public class UmlClass {
         return Objects.hash(rawForm, index);
     }
 
-    public Field<String> getClassName() {
-        return new Field<>(new MandatoryField(new TextField(new FormValue("className" + index, rawForm)), "Provide some text here"));
+    public FormField<String> getClassName() {
+        return new MandatoryField(new TextField("className" + index, rawForm), "Provide some text here");
     }
 
-    public Field<String> getAttributes() {
-        return new Field<>(new TextField(new FormValue("attributes" + index, rawForm)));
+    public FormField<String> getAttributes() {
+        return new TextField("attributes" + index, rawForm);
     }
 
-    public Field<String> getOperations() {
-        return new Field<>(new TextField(new FormValue("operations" + index, rawForm)));
+    public FormField<String> getOperations() {
+        return new TextField("operations" + index, rawForm);
     }
 
     public Shape renderShape() {

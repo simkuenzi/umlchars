@@ -1,6 +1,6 @@
 package com.github.simkuenzi.umlchars;
 
-import com.github.simkuenzi.restforms.FormValue;
+import com.github.simkuenzi.restforms.FormField;
 import com.github.simkuenzi.restforms.TextField;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -83,20 +83,20 @@ public class UmlAssociation {
         return Objects.hash(rawForm, index);
     }
 
-    public Field<String> getAssocFrom() {
-        return new Field<>(new TextField(new FormValue("assocFrom" + index, rawForm)));
+    public FormField<String> getAssocFrom() {
+        return new TextField("assocFrom" + index, rawForm);
     }
 
-    public Field<String> getAssocFromMultiplicity() {
-        return new Field<>(new TextField(new FormValue("assocFromMultiplicity" + index, rawForm)));
+    public FormField<String> getAssocFromMultiplicity() {
+        return new TextField("assocFromMultiplicity" + index, rawForm);
     }
 
-    public Field<String> getAssocTo() {
-        return new Field<>(new TextField(new FormValue("assocTo" + index, rawForm)));
+    public FormField<String> getAssocTo() {
+        return new TextField("assocTo" + index, rawForm);
     }
 
-    public Field<String> getAssocToMultiplicity() {
-        return new Field<>(new TextField(new FormValue("assocToMultiplicity" + index, rawForm)));
+    public FormField<String> getAssocToMultiplicity() {
+        return new TextField("assocToMultiplicity" + index, rawForm);
     }
 
     boolean startsFrom(int here, List<String> classNames) {

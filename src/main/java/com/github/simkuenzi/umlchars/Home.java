@@ -34,7 +34,7 @@ public class Home {
     @Produces(MediaType.TEXT_HTML)
     public Response get() throws Exception {
         Map<String, Object> vars = new HashMap<>();
-        vars.put("form", new HomeForm().noValidation());
+        vars.put("form", new HomeForm().init());
         return render(vars);
     }
 

@@ -1,5 +1,7 @@
 package com.github.simkuenzi.umlchars;
 
+import com.github.simkuenzi.restforms.FormField;
+
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.List;
@@ -22,14 +24,14 @@ public class HomeForm {
         this.rawForm = rawForm;
     }
 
-    HomeForm noValidation() {
+    HomeForm init() {
         MultivaluedMap<String, String> rawForm = new MultivaluedHashMap<>();
         rawForm.add("selectedTab", "classes-tab-btn");
         return new HomeForm(rawForm);
     }
 
     public boolean valid() {
-        return getClasses().stream().map(UmlClass::getClassName).allMatch(Field::getValid);
+        return getClasses().stream().map(UmlClass::getClassName).allMatch(FormField::isValid);
     }
 
     public List<UmlClass> getClasses() {
